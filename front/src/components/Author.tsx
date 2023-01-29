@@ -1,17 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios, { AxiosError } from 'axios';
 
 interface Author {
   id: string;
   name: string;
   bio: string;
-}
-interface Book {
-  id: string;
-  author_id: string;
-  title: string;
-  pub_year: string;
-  genre: string;
 }
 interface Error { 
   error: string;
@@ -20,14 +13,6 @@ interface Error {
 function Author() {
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-      axios.get('/api/books').then((res) => {
-          //setBooks(res.data);
-          setLoading(false);
-        });
-  }, []);
 
   async function addAuthor(e: React.FormEvent) {
     e.preventDefault();
@@ -56,14 +41,6 @@ function Author() {
       console.log(response);
     }
   };
-
-  // function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
-  //   setAuthorId(e.target.value);
-  // }
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div className="row">
