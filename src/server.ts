@@ -15,13 +15,13 @@ await db.get("PRAGMA foreign_keys = ON");
 let authors = await db.all("SELECT * FROM authors");
 let books = await db.all("SELECT * FROM books");
 if(authors.length === 0) {
-  await db.run(`INSERT INTO authors(id, name, bio) VALUES (1, "John Doe", "John Doe is a Fiktion writer")`);
-  await db.run(`INSERT INTO authors(id, name, bio) VALUES (2, "Jane Doe", "Jane Doe is a Romence writer")`);
+  await db.run(`INSERT INTO authors(id, name, bio) VALUES (1, "John Doe", "John Doe is a Fiction writer")`);
+  await db.run(`INSERT INTO authors(id, name, bio) VALUES (2, "Jane Doe", "Jane Doe is a Romance writer")`);
   authors = await db.all("SELECT * FROM authors");
 }
 if(books.length === 0) {
-  await db.run(`INSERT INTO books(id, author_id, title, pub_year, genre) VALUES (1, 1, "Book of Fiktion", 2020, "Fiction")`);
-  await db.run(`INSERT INTO books(id, author_id, title, pub_year, genre) VALUES (2, 2, "Book of Romence", 2020, "Romance")`);
+  await db.run(`INSERT INTO books(id, author_id, title, pub_year, genre) VALUES (1, 1, "Book of Fiction", 2020, "Fiction")`);
+  await db.run(`INSERT INTO books(id, author_id, title, pub_year, genre) VALUES (2, 2, "Book of Romance", 2010, "Romance")`);
   books = await db.all("SELECT * FROM books");
 }
 // console.log("Authors", authors);
@@ -68,7 +68,7 @@ app.get("/api/book", (req: any, res: BookResponse) => {
     return res.status(400).json({ error: "Book is required" });
   }
   if (isNaN(year)) {
-    return res.status(400).json({ error: `Year is not valid` });
+    return res.status(400).json({ error: `Year is not valid. Year must be a number.` });
   }
   let filteredBooks = books.filter((book: Book) => book.pub_year >= year);
   if (filteredBooks.length > 0) {
@@ -99,11 +99,11 @@ app.post("/api/book", async (req, res: PostResponse) => {
   }
   let year = Number(book.pub_year);
   if (isNaN(year)) {
-    return res.status(400).json({ error: `Public year is not valid` });
+    return res.status(400).json({ error: `Public year is not valid. Year must be a number.` });
   }
   let author = authors.find((author: Author) => author.id === book.author_id);
   if (!author) {
-    return res.status(400).json({ error: `No authors with ID ${book.author_id} found` });
+    return res.status(400).json({ error: `No authors with ID ${book.author_id} found. Please check the authors list to see valid author ID or to add new author.` });
   }
   let id = books.length > 0 ? `${Math.max(...books.map((book: Book) => Number(book.id))) + 1}` : "1";
   let INSERT_SQL = await db.prepare(
@@ -130,7 +130,7 @@ app.put("/api/book/:id", async (req, res: BookResponse) => {
 
   let book = books.find((book: Book) => book.id === id);
   if (!book) {
-    return res.status(400).json({ error: `No books with ID ${id} found` });
+    return res.status(400).json({ error: `No books with ID ${id} found. Please check the books list to see valid book ID.` });
   }
   
   book.title = bookReq.title;
@@ -149,7 +149,7 @@ app.delete("/api/book/:id", async (req, res: BookResponse) => {
   }
   let book = books.find((book: Book) => book.id === id);
   if(!book) {
-    return res.status(400).json({ error: `No books with ID ${id} found` });
+    return res.status(400).json({ error: `No books with ID ${id} found. Please check the books list to see valid book ID.` });
   }
   books = books.filter((book: Book) => book.id != id);
   await db.run(`DELETE FROM books WHERE id = ?`, [id]);
@@ -230,7 +230,7 @@ app.delete("/api/author/:id", async (req, res: AuthorResponse) => {
   }
   let author = authors.find((author: Author) => author.id === id);
   if(!author) {
-    return res.status(400).json({ error: `No authors with ID ${id} found` });
+    return res.status(400).json({ error: `No authors with ID ${id} found. Please check the authors list to see valid author ID.` });
   }
   authors = authors.filter((author: Author) => author.id != id);
   await db.run(`DELETE FROM authors WHERE id = ?`, [id]);
