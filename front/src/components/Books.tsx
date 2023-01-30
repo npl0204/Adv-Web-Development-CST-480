@@ -50,7 +50,7 @@ function Books() {
     let value = event.target.value;
     if(isNaN(Number(event.target.value))) {
       value = "";
-      alert("Please enter a valid year");
+      alert("Please enter a valid year. Year must be a number.");
     }
     if (value === "") {
       setSortedBook(sortBooks(books));
