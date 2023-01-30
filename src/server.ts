@@ -15,13 +15,13 @@ await db.get("PRAGMA foreign_keys = ON");
 let authors = await db.all("SELECT * FROM authors");
 let books = await db.all("SELECT * FROM books");
 if(authors.length === 0) {
-  await db.run(`INSERT INTO authors(id, name, bio) VALUES (1, "John Doe", "John Doe is a Fiction writer")`);
-  await db.run(`INSERT INTO authors(id, name, bio) VALUES (2, "Jane Doe", "Jane Doe is a Romance writer")`);
+  await db.run(`INSERT INTO authors(id, name, bio) VALUES (1, "John Doe", "John Doe is a Fiktion writer")`);
+  await db.run(`INSERT INTO authors(id, name, bio) VALUES (2, "Jane Doe", "Jane Doe is a Romence writer")`);
   authors = await db.all("SELECT * FROM authors");
 }
 if(books.length === 0) {
-  await db.run(`INSERT INTO books(id, author_id, title, pub_year, genre) VALUES (1, 1, "Book of Fiction", 2020, "Fiction")`);
-  await db.run(`INSERT INTO books(id, author_id, title, pub_year, genre) VALUES (2, 2, "Book of Romance", 2020, "Romance")`);
+  await db.run(`INSERT INTO books(id, author_id, title, pub_year, genre) VALUES (1, 1, "Book of Fiktion", 2020, "Fiction")`);
+  await db.run(`INSERT INTO books(id, author_id, title, pub_year, genre) VALUES (2, 2, "Book of Romence", 2020, "Romance")`);
   books = await db.all("SELECT * FROM books");
 }
 // console.log("Authors", authors);
