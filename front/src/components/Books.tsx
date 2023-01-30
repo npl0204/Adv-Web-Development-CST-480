@@ -1,14 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Author from './Author';
 
 // TODO: Create a type.d.ts file and move this interface there
-// Then, import it here
 
-interface Author {
-  id: string;
-  name: string;
-  bio: string;
-}
 interface Book {
   id: string;
   author_id: string;
@@ -18,21 +13,19 @@ interface Book {
 }
 
 function Books() {
-  //const [authors, setAuthors] = useState([] as Author[])
   const [loading, setLoading] = useState(true);
   const [books, setBooks] = useState([] as Book[]);
+  const [searchInput, setSearchInput] = useState("");
+  const [sortedBooks, setSortedBook] = useState([] as Book[]);
 
   // use axios to fetch books from backend
   useEffect(() => {
     console.log("Getting data")
     axios.get('/api/books').then((res) => {
-        setBooks(res.data);
-        setLoading(false);
+      setBooks(res.data);
+      setSortedBook(sortBooks(res.data));
+      setLoading(false);
     });
-    // axios.get('/api/authors').then((res) => {
-    //   setAuthors(res.data);
-    //   setLoading(false);
-    // });
   }, []);
 
   if (loading) {
@@ -40,14 +33,49 @@ function Books() {
   }
 
   if (books.length === 0) {
-    return <div>No books found</div>;
+    return  <div className="row">
+      <h2 style={{backgroundColor: "lightpink"}}>All Books</h2>
+      <input
+        className="form-control col-12 mt-3 mb-3"
+        type="search"
+        placeholder="Display all Books Published after Year ..."
+        value={searchInput} 
+        onChange={handleChangeYear}/>
+      <h5 className="alert"> No books found</h5>
+    </div>;
   }
-  let books_sorted = books.sort(function(a,b){
-    return a.title.localeCompare(b.title);
-  })
+
+  function handleChangeYear(event: React.ChangeEvent<HTMLInputElement>) {
+    setSearchInput(event.target.value);
+    let value = event.target.value;
+    if(isNaN(Number(event.target.value))) {
+      value = "";
+      alert("Please enter a valid year");
+    }
+    if (value === "") {
+      setSortedBook(sortBooks(books));
+    }
+    const books_filtered = books.filter((book) => {
+      return Number(book.pub_year) >= Number(value);
+    });
+    setSortedBook(sortBooks(books_filtered));
+  }
+
+  function sortBooks(books: Book[]) {
+    return books.sort((a, b) => {
+      return a.title.localeCompare(b.title);
+    });
+  }
+
   return (
     <div className="row">
     <h2 style={{backgroundColor: "lightpink"}}>All Books</h2>
+    <input
+      className="form-control col-12 mt-3 mb-3"
+      type="search"
+      placeholder="Display all Books Published after Year ..."
+      value={searchInput} 
+      onChange={handleChangeYear}/>
     <table className="table table-hover table-bordered mt-3">
       <thead>
         <tr>
@@ -59,7 +87,7 @@ function Books() {
         </tr>
       </thead>
       <tbody>
-          { books_sorted.map((book) => (
+          { sortedBooks.map((book) => (
             <tr key={book.id}>
               <td>
                 <a href={`/api/books/${book.id}`}>{ book.title }</a>
@@ -68,7 +96,7 @@ function Books() {
                 { book.id } 
               </td>
               <td>
-                { book.author_id } 
+                { book.author_id }
               </td>
               <td> 
                 { book.pub_year }
