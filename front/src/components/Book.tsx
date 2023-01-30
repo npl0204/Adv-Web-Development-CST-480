@@ -95,7 +95,7 @@ function Book() {
         <input type="text" value={genre} onChange={(e) => setGenre(e.target.value)} />
       </div>
       <div className="row justify-content-center">
-        <button className="btn btn-outline-primary mt-3 col-1" onClick={addBook}>Add Book</button>
+        <button className="btn btn-outline-primary mt-3 mb-3 col-1" onClick={addBook}>Add Book</button>
       </div>
     </div>
   )
