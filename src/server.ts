@@ -4,8 +4,8 @@ import { open } from "sqlite";
 
 let app = express();
 app.use(express.json());
+app.use(express.static("public"));
 
-// create database "connection"
 let db = await open({
     filename: "../database.db",
     driver: sqlite3.Database,
@@ -14,18 +14,19 @@ await db.get("PRAGMA foreign_keys = ON");
 
 let authors = await db.all("SELECT * FROM authors");
 let books = await db.all("SELECT * FROM books");
-console.log("Authors", authors);
-console.log("Books", books);
+if(authors.length === 0) {
+  await db.run(`INSERT INTO authors(id, name, bio) VALUES (1, "John Doe", "John Doe is a Fiction writer")`);
+  await db.run(`INSERT INTO authors(id, name, bio) VALUES (2, "Jane Doe", "Jane Doe is a Romance writer")`);
+  authors = await db.all("SELECT * FROM authors");
+}
+if(books.length === 0) {
+  await db.run(`INSERT INTO books(id, author_id, title, pub_year, genre) VALUES (1, 1, "Book of Fiction", 2020, "Fiction")`);
+  await db.run(`INSERT INTO books(id, author_id, title, pub_year, genre) VALUES (2, 2, "Book of Romance", 2020, "Romance")`);
+  books = await db.all("SELECT * FROM books");
+}
+// console.log("Authors", authors);
+// console.log("Books", books);
 
-// insert example
-// await db.run(
-//     "INSERT INTO authors(id, name, bio) VALUES('1', 'Figginsworth III', 'A traveling gentleman.')"
-// );
-// await db.run(
-//     "INSERT INTO books(id, author_id, title, pub_year, genre) VALUES ('1', '1', 'My Fairest Lady', '1866', 'romance')"
-// );
-
-// GET/POST/DELETE example
 interface Book {
   id: string;
   author_id: string;
@@ -56,12 +57,12 @@ type AuthorResponse = Response<Author[] | Error>;
 type PostResponse = Response<Success | Error>;
 
 // get all books 
-app.get("/books", (req: any, res: BookResponse) => {
+app.get("/api/books", (req: any, res: BookResponse) => {
   return res.status(200).json(books);
 });
 
 // get all books on or after a certain year
-app.get("/book", (req: any, res: BookResponse) => {
+app.get("/api/book", (req: any, res: BookResponse) => {
   const year = req.query.year;
   if (!year) {
     return res.status(400).json({ error: "Book is required" });
@@ -77,7 +78,7 @@ app.get("/book", (req: any, res: BookResponse) => {
 });
 
 // get 1 book with id
-app.get("/book/:id", (req, res: BookResponse) => {
+app.get("/api/book/:id", (req, res: BookResponse) => {
   const id = req.params.id;
   if(!id) {
     return res.status(400).json({ error: `Please provide an id for book` });
@@ -91,7 +92,7 @@ app.get("/book/:id", (req, res: BookResponse) => {
 });
 
 // insert a book
-app.post("/book", async (req, res: PostResponse) => {
+app.post("/api/book", async (req, res: PostResponse) => {
   const book = req.body.book;
   if (!book) {
     return res.status(400).json({ error: "Book is required" });
@@ -117,7 +118,7 @@ app.post("/book", async (req, res: PostResponse) => {
 });
 
 // put to update a book
-app.put("/book/:id", async (req, res: BookResponse) => {
+app.put("/api/book/:id", async (req, res: any) => {
   const bookReq = req.body.book;
   const id = req.params.id;
   if (!bookReq) {
@@ -141,7 +142,7 @@ app.put("/book/:id", async (req, res: BookResponse) => {
   return res.sendStatus(200);
 });
 
-app.delete("/book/:id", async (req, res: BookResponse) => {
+app.delete("/api/book/:id", async (req, res: any) => {
   const id = req.params.id;
   if (!id) {
     return res.status(400).json({ error: "ID is required" });
@@ -156,12 +157,12 @@ app.delete("/book/:id", async (req, res: BookResponse) => {
 });
 
 // get all authors 
-app.get("/authors", (req, res: AuthorResponse) => {
+app.get("/api/authors", (req, res: AuthorResponse) => {
   return res.json(authors);
 });
 
 // get 1 author with id
-app.get("/author/:id", (req, res: AuthorResponse) => {
+app.get("/api/author/:id", (req, res: AuthorResponse) => {
   const id = req.params.id;
   if (!id) {
     return res.status(400).json({ error: `Please provide an id for author` });
@@ -175,7 +176,7 @@ app.get("/author/:id", (req, res: AuthorResponse) => {
 });
 
 // insert an author
-app.post("/author", async (req, res: PostResponse) => {
+app.post("/api/author", async (req, res: PostResponse) => {
   const author = req.body.author;
   if (!author) {
     return res.status(400).json({ error: "Author is required" });
@@ -193,7 +194,7 @@ app.post("/author", async (req, res: PostResponse) => {
 });
 
 // put to update an author
-app.put("/author/:id", (req, res: AuthorResponse) => {
+app.put("/api/author/:id", (req, res: any) => {
   const authorReq = req.body.author;
   const id = req.params.id;
   if (!authorReq) {
@@ -218,7 +219,7 @@ app.put("/author/:id", (req, res: AuthorResponse) => {
 });
 
 //  delte author but not delete author that has books
-app.delete("/author/:id", async (req, res: AuthorResponse) => {
+app.delete("/api/author/:id", async (req, res: any) => {
   const id = req.params.id;
   if (!id) {
     return res.status(400).json({ error: "ID is required" });
@@ -235,68 +236,6 @@ app.delete("/author/:id", async (req, res: AuthorResponse) => {
   await db.run(`DELETE FROM authors WHERE id = ?`, [id]);
   return res.sendStatus(200);
 });
-
-// Author
-/*************
-app.get("/author", (req, res: AuthorResponse) => {
-    if (!req.query.bar) {
-        return res.status(400).json({ error: "bar is required" });
-    }
-    return res.json({ message: `You sent: ${req.query.bar} in the query` });
-});
-
-app.post("/author", (req, res: AuthorResponse) => {
-    if (!req.body.bar) {
-        return res.status(400).json({ error: "bar is required" });
-    }
-    return res.json({ message: `You sent: ${req.body.bar} in the body` });
-});
-
-app.delete("/author", (req, res) => {
-    // etc.
-    res.sendStatus(200);
-});
-
-***********/
-
-
-//
-// ASYNC/AWAIT EXAMPLE
-//
-
-// function sleep(ms: number) {
-//     return new Promise((resolve) => setTimeout(resolve, ms));
-// }
-
-// need async keyword on request handler to use await inside it
-// app.get("/bar", async (req, res: FooResponse) => {
-//     console.log("Waiting...");
-//     // await is equivalent to calling sleep.then(() => { ... })
-//     // and putting all the code after this in that func body ^
-//     await sleep(3000);
-//     // if we omitted the await, all of this code would execute
-//     // immediately without waiting for the sleep to finish
-//     console.log("Done!");
-//     return res.sendStatus(200);
-// });
-
-// curl http://localhost:3000/bar
-// run server
-
-// insert example with parameterized queries
-// important to use parameterized queries to prevent SQL injection
-// when inserting untrusted data
-// let statement = await db.prepare(
-//     "INSERT INTO books(id, author_id, title, pub_year, genre) VALUES (?, ?, ?, ?, ?)"
-// );
-// await statement.bind(["2", "1", "A Travelogue of Tales", "1867", "adventure"]);
-// await statement.run();
-
-// select examples
-// let authors = await db.all("SELECT * FROM authors");
-// let books = await db.all("SELECT * FROM books WHERE author_id = '1'");
-// let filteredBooks = await db.all("SELECT * FROM books WHERE pub_year = '1867'");
-// console.log("Some books", filteredBooks);
 
 let port = 3000;
 let host = "localhost";
