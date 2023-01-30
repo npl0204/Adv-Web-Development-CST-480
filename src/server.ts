@@ -57,7 +57,7 @@ type AuthorResponse = Response<Author[] | Error>;
 type PostResponse = Response<Success | Error>;
 
 // get all books 
-app.get("/api/books", (req: any, res: BookResponse) => {
+app.get("/api/books", (req, res: BookResponse) => {
   return res.status(200).json(books);
 });
 
@@ -118,7 +118,7 @@ app.post("/api/book", async (req, res: PostResponse) => {
 });
 
 // put to update a book
-app.put("/api/book/:id", async (req, res: any) => {
+app.put("/api/book/:id", async (req, res: BookResponse) => {
   const bookReq = req.body.book;
   const id = req.params.id;
   if (!bookReq) {
@@ -142,7 +142,7 @@ app.put("/api/book/:id", async (req, res: any) => {
   return res.sendStatus(200);
 });
 
-app.delete("/api/book/:id", async (req, res: any) => {
+app.delete("/api/book/:id", async (req, res: BookResponse) => {
   const id = req.params.id;
   if (!id) {
     return res.status(400).json({ error: "ID is required" });
@@ -194,7 +194,7 @@ app.post("/api/author", async (req, res: PostResponse) => {
 });
 
 // put to update an author
-app.put("/api/author/:id", (req, res: any) => {
+app.put("/api/author/:id", (req, res: AuthorResponse) => {
   const authorReq = req.body.author;
   const id = req.params.id;
   if (!authorReq) {
@@ -219,7 +219,7 @@ app.put("/api/author/:id", (req, res: any) => {
 });
 
 //  delte author but not delete author that has books
-app.delete("/api/author/:id", async (req, res: any) => {
+app.delete("/api/author/:id", async (req, res: AuthorResponse) => {
   const id = req.params.id;
   if (!id) {
     return res.status(400).json({ error: "ID is required" });
