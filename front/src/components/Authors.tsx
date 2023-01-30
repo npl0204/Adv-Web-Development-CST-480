@@ -27,6 +27,7 @@ function Authors() {
   if (authors.length === 0) {
     return <div>No authors found</div>;
   }
+
   return (
     <div className="row">
     <h2 style={{backgroundColor: "lightpink"}}>All Authors</h2>
