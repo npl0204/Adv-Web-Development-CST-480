@@ -1,16 +1,9 @@
-import Books from './components/Books';
-import Book from './components/Book';
-import Authors from './components/Authors';
-import Author from './components/Author';
+import './App.css';
+import Main from './pages/main';
 
 function App() {
   return (
-    <div className="container">
-      <Books />
-      <Book/>
-      <Authors />
-      <Author />
-    </div>
+    <Main />
   )
 }
 
