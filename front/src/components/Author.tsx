@@ -1,19 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios, { AxiosError } from 'axios';
-
-interface Author {
-  id: string;
-  name: string;
-  bio: string;
-}
-interface Error { 
-  error: string;
-}
+import { AuthorType, Error } from '../../src/type';
 
 function Author() {
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [authors, setAuthors] = useState([] as AuthorType[]);
 
+  useEffect(() => {
+    console.log("Getting data")
+    axios.get('/api/authors').then((res) => {
+        setAuthors(res.data);
+        setLoading(false);
+    });
+  }, []);
+  
   async function addAuthor(e: React.FormEvent) {
     e.preventDefault();
     if(name.length === 0 || bio.length === 0) {
@@ -21,13 +23,14 @@ function Author() {
       return;
     }
     try {
-      await axios.post('/api/author',{
+      axios.post('/api/author',{
         author: {
           name: name,
           bio: bio
         }
       }).then((res) => {
         alert(res.data.message);
+        window.location.reload();
         console.log(res.data);
       });
     } catch(error) {
