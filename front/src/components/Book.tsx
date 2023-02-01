@@ -1,24 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios, { AxiosError } from 'axios';
-
-interface Author {
-  id: string;
-  name: string;
-  bio: string;
-}
-interface Book {
-  id: string;
-  author_id: string;
-  title: string;
-  pub_year: string;
-  genre: string;
-}
-interface Error { 
-  error: string;
-}
+import { AuthorType, Error } from '../../src/type';
 
 function Book() {
-  const [authors, setAuthors] = useState([] as Author[])
+  const [authors, setAuthors] = useState([] as AuthorType[])
   const [title, setTitle] = useState('');
   const [pubYear, setPubYear] = useState('');
   const [genre, setGenre] = useState('');
@@ -48,6 +33,7 @@ function Book() {
         }
       }).then((res) => {
         alert(res.data.message);
+        window.location.reload();
         console.log(res.data);
       });
     } catch(error) {
