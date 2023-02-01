@@ -1,22 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Author from './Author';
-
-// TODO: Create a type.d.ts file and move this interface there
-
-interface Book {
-  id: string;
-  author_id: string;
-  title: string;
-  pub_year: string;
-  genre: string;
-}
+import { BookType } from '../../src/type';
 
 function Books() {
   const [loading, setLoading] = useState(true);
-  const [books, setBooks] = useState([] as Book[]);
+  const [books, setBooks] = useState([] as BookType[]);
   const [searchInput, setSearchInput] = useState("");
-  const [sortedBooks, setSortedBook] = useState([] as Book[]);
+  const [sortedBooks, setSortedBook] = useState([] as BookType[]);
 
   // use axios to fetch books from backend
   useEffect(() => {
@@ -61,7 +52,7 @@ function Books() {
     setSortedBook(sortBooks(books_filtered));
   }
 
-  function sortBooks(books: Book[]) {
+  function sortBooks(books: BookType[]) {
     return books.sort((a, b) => {
       return a.title.localeCompare(b.title);
     });
