@@ -1,15 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
-interface Author {
-  id: string;
-  name: string;
-  bio: string;
-}
+import { AuthorType } from '../../src/type';
 
 function Authors() {
   const [loading, setLoading] = useState(true);
-  const [authors, setAuthors] = useState([] as Author[]);
+  const [authors, setAuthors] = useState([] as AuthorType[]);
 
   // use axios to fetch authors from backend
   useEffect(() => {
