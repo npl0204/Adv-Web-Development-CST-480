@@ -35,7 +35,7 @@ app.get("/api/books", async (req, res: BookResponse) => {
   if (isNaN(+year)) {
     return res.status(400).json({ error: "Year is not valid. Year must be a number." });
   }
-  let filteredBooks = await db.all(`SELECT * FROM books WHERE pub_year >= ${year}`);
+  let filteredBooks = await db.all(`SELECT * FROM books WHERE pub_year >= ?`, [year]);
   if (filteredBooks.length > 0) {
     return res.status(200).json(filteredBooks);
   }
@@ -84,18 +84,41 @@ app.post("/api/books", async (req, res: PostResponse) => {
 app.put("/api/books/:id", async (req, res: BookResponse) => {
   const bookReq = req.body.book;
   const id = req.params.id;
-  if (!bookReq) {
-    return res.status(400).json({ error: "Book is required" });
-  }
+
   if (!id) {
     return res.status(400).json({ error: "ID is required" });
   }
+
   let book = await db.all(`SELECT * FROM books WHERE id = '${id}'`);
   if (book.length === 0) {
     return res.status(400).json({ error: `No books with ID ${id} found. Please check the books list to see valid book ID.` });
   }
-  await db.run(`UPDATE books set author_id = ?, title = ?, pub_year = ?, genre = ? WHERE id = ?`,
-         [bookReq.author_id, bookReq.title, bookReq.pub_year, bookReq.genre, id]);
+  
+  const updates = [];
+  if (bookReq.author_id) {
+    let author = await db.all(`SELECT * FROM books WHERE id = '${bookReq.author_id}'`);
+    if (author.length === 0) {
+      return res.status(400).json({ error: `No authors with ID ${bookReq.author_id} found. Please check the authors list to see valid author ID.` });
+    }
+    updates.push(`author_id = "${bookReq.author_id}"`);
+  }
+  if (bookReq.pub_year) {
+    if (isNaN(+bookReq.pub_year)) {
+      return res.status(400).json({ error: `Public year is not valid. Year must be a number.` });
+    }
+    updates.push(`pub_year = "${bookReq.pub_year}"`);
+  }
+  if (bookReq.title) {
+    updates.push(`title = "${bookReq.title}"`);
+  }
+  if (bookReq.genre) {
+    updates.push(`genre = "${bookReq.genre}"`);
+  }
+  if (updates.length === 0) {
+    res.status(400).json({ error: "Book is required" });
+    return;
+  }
+  await db.run(`UPDATE books SET ${updates.join(', ')} WHERE id = ?`, [id]);
   return res.sendStatus(200);
 });
 
@@ -151,22 +174,32 @@ app.post("/api/authors", async (req, res: PostResponse) => {
   });
 });
 
-// put to update an author
+// put to update a author
 app.put("/api/authors/:id", async (req, res: AuthorResponse) => {
   const authorReq = req.body.author;
   const id = req.params.id;
-  if (!authorReq) {
-    return res.status(400).json({ error: "Author is required" });
-  }
+
   if (!id) {
     return res.status(400).json({ error: "ID is required" });
   }
+
   let author = await db.all(`SELECT * FROM authors WHERE id = '${id}'`);
   if (author.length === 0) {
     return res.status(400).json({ error: `No authors with ID ${id} found. Please check the authors list to see valid author ID.` });
   }
-  db.run(`UPDATE authors set name = ?, bio = ? WHERE id = ?`,
-      [authorReq.name, authorReq.bio, id]);
+  
+  const updates = [];
+  if (authorReq.name) {
+    updates.push(`name = "${authorReq.name}"`);
+  }
+  if (authorReq.bio) {
+    updates.push(`bio = "${authorReq.bio}"`);
+  }
+  if (updates.length === 0) {
+    res.status(400).json({ error: "Author is required" });
+    return;
+  }
+  await db.run(`UPDATE authors SET ${updates.join(', ')} WHERE id = ?`, [id]);
   return res.sendStatus(200);
 });
 
