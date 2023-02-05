@@ -62,22 +62,19 @@ test("Get books with year", async () => {
 test("Update book", async () => {
   const book = {
     id: "3",
-    author_id: "1",
     title: "The of John",
-    pub_year: "2021",
-    genre: "Fiction",
+    pub_year: "2021"
   }
-  let result = await axios.put(`${baseUrl}/api/books/1`, { book });
+  let result = await axios.put(`${baseUrl}/api/books/3`, { book });
   expect(result.status).toEqual(200);
 });
 
 test("Update author", async () => {
   const author = {
     id: "3",
-    name: "Figginsworth III",
-    bio: "A gentleman.",
+    bio: "A gentleman."
   }
-  let result = await axios.put(`${baseUrl}/api/authors/1`, { author });
+  let result = await axios.put(`${baseUrl}/api/authors/3`, { author });
   expect(result.status).toEqual(200);
 });
 
