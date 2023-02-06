@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { AuthorType } from '../../src/type';
+import { Link } from 'react-router-dom';
 
 function Authors() {
   const [loading, setLoading] = useState(true);
@@ -38,7 +39,11 @@ function Authors() {
           { authors.map((author) => (
             <tr key={author.id}>
               <td>
-                <a href={`/api/books/${author.id}`}>{ author.name }</a>
+                <Link to={`/authors/${author.id}`}>
+                  <p>
+                    <span className="normal">{ author.name }</span>
+                  </p>
+                </Link>
               </td>
               <td>
                 { author.id }
