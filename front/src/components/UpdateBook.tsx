@@ -1,43 +1,62 @@
 import React, { useState, useEffect } from 'react';
 import axios, { AxiosError } from 'axios';
-import { Error } from '../type';
+import { BookType, AuthorType, Error } from '../type';
 import { useParams, Link } from 'react-router-dom'
-import { TextField,  
-         Typography,
-         Box,
-         Button 
-        } from '@mui/material';
+import { TextField, 
+  MenuItem, 
+  Typography,
+  Box,
+  Button 
+ } from '@mui/material';
 import Container from '@mui/material/Container';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
-import { AuthorType } from '../../src/type';
 
-function UpdateAuthor() {
+function UpdateBook() {
   const { id } = useParams();
   
-  const [name, setName] = useState('');
-  const [bio, setBio] = useState('');
+  const [authors, setAuthors] = useState([] as AuthorType[]);
+  const [title, setTitle] = useState('');
+  const [pubYear, setPubYear] = useState('');
+  const [genre, setGenre] = useState('');
   const [loading, setLoading] = useState(true);
-  const [author, setAuthor] = useState<AuthorType>({ id:`${id}`, name: '', bio: '' });
+  const [authorId, setAuthorId] = useState('');
+  const [book, setBook] = useState<BookType>({ id:`${id}`, title: '', pub_year: '', author_id: '', genre: '' });
 
   useEffect(() => {
     console.log("Getting data")
-    axios.get(`/api/authors/${id}`).then((res) => {
-      setAuthor(res.data[0]);
+    axios.get(`/api/books/${id}`).then((res) => {
+      setBook(res.data[0]);
       setLoading(false);
-      console.log(res.data);
     });
   }, []);
+
+  useEffect(() => {
+    axios.get('/api/authors').then((res) => {
+      setAuthors(res.data);
+      setLoading(false);
+    });
+  }, []);
+
+  let author = authors.find((author: AuthorType) => author.id === book.author_id);
+  let name
+  if (author) {
+    name = author.name;
+  } else {
+    name = ''
+  }
 
   async function update(e: React.FormEvent) {
     e.preventDefault();
     try {
-      await axios.put(`/api/authors/${id}`,{
-        author: {
-          name: name,
-          bio: bio
+      await axios.put(`/api/books/${id}`,{
+        book: {
+          title: title,
+          pub_year: pubYear,
+          genre: genre,
+          author_id: authorId
         }
       }).then((res) => {
-        alert("Author's information was updated successfully.");
+        alert("Book's information was updated successfully.");
         window.location.reload();
         console.log(res.data);
       });
@@ -53,19 +72,23 @@ function UpdateAuthor() {
     }
   };
 
+  function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    setAuthorId(e.target.value);
+  }
+
   if (loading) {
     return <div>Loading...</div>;
   }
 
   return (
     <>
-		<Link to='/authors' style={{ color: '#fd8496', textDecoration: 'inherit' }}>
+    <Link to='/books' style={{ color: '#fd8496', textDecoration: 'inherit' }}>
           <ArrowLeftIcon fontSize="small"/>
           Go back
     </Link>
     <div className="row">
     <Container component="main" sx={{ mt: 8, mb: 2 }} maxWidth="sm">
-    <Typography variant="h5" color="lightpink"><b>Update Author</b></Typography>
+    <Typography variant="h5" color="lightpink"><b>Update Book</b></Typography>
     <Box
       component="form"
       sx={{
@@ -77,26 +100,45 @@ function UpdateAuthor() {
       <div>
           <TextField
             id="outlined-required"
-            label="Name"
-            defaultValue={author.name}
-            onChange={(e) => setName(e.target.value)}
+            select
+            label="Author"
+            variant="outlined"
+            defaultValue={name}
+            onChange={(e) => setAuthorId(e.target.value)}
+          >
+            {authors.map((author) => (
+              <MenuItem
+                key={author.id}
+                value={author.name}
+              > {author.name}
+              </MenuItem>
+            ))}
+          </TextField>
+          <TextField
+            id="outlined-required"
+            label="Title"
+            defaultValue={book.title}
+            onChange={(e) => setTitle(e.target.value)}
           />
           <TextField
             id="outlined-required"
-            label="Bio"
-            defaultValue={author.bio}
-            multiline
-            onChange={(e) => setBio(e.target.value)}
+            label="Publication Year"
+            defaultValue={book.pub_year}
+            onChange={(e) => setPubYear(e.target.value)}
           />
-          <div>
-          <Button variant="outlined" onClick={update} sx={{ color: '#fd8496' }}>Update</Button>
-          </div>
+          <TextField
+            id="outlined-required"
+            label="Genre"
+            defaultValue={book.genre}
+            onChange={(e) => setGenre(e.target.value)}
+          />
+          <div><Button variant="outlined" onClick={update} sx={{ color: '#fd8496' }}>Update</Button></div>
       </div>
     </Box>
     </Container>
     </div>
-		</>
+    </>
   );
 }
 
-export default UpdateAuthor;
+export default UpdateBook;
