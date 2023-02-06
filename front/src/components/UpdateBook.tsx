@@ -2,6 +2,14 @@ import React, { useState, useEffect } from 'react';
 import axios, { AxiosError } from 'axios';
 import { AuthorType, Error } from '../type';
 import { useParams, Link } from 'react-router-dom'
+import { TextField, 
+  MenuItem, 
+  Typography,
+  Box,
+  Button 
+ } from '@mui/material';
+import Container from '@mui/material/Container';
+import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 
 function UpdateBook() {
   const { id } = useParams();
@@ -57,36 +65,59 @@ function UpdateBook() {
 
   return (
     <>
-		<Link to='/books'>Go back</Link>
-      <div className="row">
-        <h2 style={{backgroundColor: "lightpink"}}>Update a Book</h2>
-        <div className="d-flex mt-1 justify-content-between col-6">
-          <label> <h5>Author</h5></label>
-          <select value={authorId} onChange={handleChange}>
-              <option value="">Select an author</option>
-          { authors.map((author) => (
-              <option key={author.id} value={author.id}>{ author.name }</option>
-          ))}
-          </select>
-        </div>
-        <div className="d-flex mt-1 justify-content-between col-6">
-          <label> <h5>Title</h5> </label>
-          <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
-          </div>
-        <div className="d-flex mt-1 justify-content-between col-6">
-          <label> <h5>Publication Year </h5></label>
-            <input type="text" value={pubYear} onChange={(e) => setPubYear(e.target.value)} />
-        </div>
-        <div className="d-flex mt-1 justify-content-between col-6">
-          <label> <h5>Genre</h5> </label>
-          <input type="text" value={genre} onChange={(e) => setGenre(e.target.value)} />
-        </div>
-        <div className="row justify-content-center">
-          <button className="btn btn-outline-primary mt-3 mb-3 col-1" onClick={update}>Update</button>
-        </div>
+    <Link to='/books' style={{ color: '#fd8496', textDecoration: 'inherit' }}>
+          <ArrowLeftIcon fontSize="small"/>
+          Go back
+    </Link>
+    <div className="row">
+    <Container component="main" sx={{ mt: 8, mb: 2 }} maxWidth="sm">
+    <Typography variant="h5" color="lightpink"><b>Update Book</b></Typography>
+    <Box
+      component="form"
+      sx={{
+        '& .MuiTextField-root': { m: 1, width: '25ch' },
+      }}
+      noValidate
+      autoComplete="off"
+    >
+      <div>
+          <TextField
+            id="outlined-required"
+            select
+            label="Author"
+            variant="outlined"
+            onChange={(e) => setAuthorId(e.target.value)}
+          >
+            {authors.map((author) => (
+              <MenuItem
+                key={author.id}
+                value={author.id}
+              > { author.name }
+              </MenuItem>
+            ))}
+          </TextField>
+          <TextField
+            id="outlined-required"
+            label="Title"
+            onChange={(e) => setTitle(e.target.value)}
+          />
+          <TextField
+            id="outlined-required"
+            label="Publication Year"
+            onChange={(e) => setPubYear(e.target.value)}
+          />
+          <TextField
+            id="outlined-required"
+            label="Genre"
+            onChange={(e) => setGenre(e.target.value)}
+          />
+          <div><Button variant="outlined" onClick={update} sx={{ color: '#fd8496' }}>Update</Button></div>
       </div>
-		</>
-  )
+    </Box>
+    </Container>
+    </div>
+    </>
+  );
 }
 
 export default UpdateBook;
