@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios, { AxiosError } from 'axios';
-import { AuthorType, Error } from '../type';
+import { BookType, AuthorType, Error } from '../type';
 import { useParams, Link } from 'react-router-dom'
 import { TextField, 
   MenuItem, 
@@ -20,13 +20,30 @@ function UpdateBook() {
   const [genre, setGenre] = useState('');
   const [loading, setLoading] = useState(true);
   const [authorId, setAuthorId] = useState('');
+  const [book, setBook] = useState<BookType>({ id:`${id}`, title: '', pub_year: '', author_id: '', genre: '' });
 
   useEffect(() => {
-      axios.get('/api/authors').then((res) => {
-          setAuthors(res.data);
-          setLoading(false);
-      });
+    console.log("Getting data")
+    axios.get(`/api/books/${id}`).then((res) => {
+      setBook(res.data[0]);
+      setLoading(false);
+    });
   }, []);
+
+  useEffect(() => {
+    axios.get('/api/authors').then((res) => {
+      setAuthors(res.data);
+      setLoading(false);
+    });
+  }, []);
+
+  let author = authors.find((author: AuthorType) => author.id === book.author_id);
+  let name
+  if (author) {
+    name = author.name;
+  } else {
+    name = ''
+  }
 
   async function update(e: React.FormEvent) {
     e.preventDefault();
@@ -86,12 +103,13 @@ function UpdateBook() {
             select
             label="Author"
             variant="outlined"
+            defaultValue={name}
             onChange={(e) => setAuthorId(e.target.value)}
           >
             {authors.map((author) => (
               <MenuItem
                 key={author.id}
-                value={author.id}
+                value={author.name}
               > { author.name }
               </MenuItem>
             ))}
@@ -99,16 +117,19 @@ function UpdateBook() {
           <TextField
             id="outlined-required"
             label="Title"
+            defaultValue={book.title}
             onChange={(e) => setTitle(e.target.value)}
           />
           <TextField
             id="outlined-required"
             label="Publication Year"
+            defaultValue={book.pub_year}
             onChange={(e) => setPubYear(e.target.value)}
           />
           <TextField
             id="outlined-required"
             label="Genre"
+            defaultValue={book.genre}
             onChange={(e) => setGenre(e.target.value)}
           />
           <div><Button variant="outlined" onClick={update} sx={{ color: '#fd8496' }}>Update</Button></div>
