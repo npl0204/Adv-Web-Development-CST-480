@@ -15,19 +15,19 @@ test("Add 1 Author", async () =>{
   }
   let result = await axios.post(`${baseUrl}/api/authors`, { author });
   const data = result.data;
-  expect(data.message).toEqual("Successfully added. Author ID is 3");
+  expect(data.message).toEqual("Successfully added. Author ID is 6");
 });
 
 test("Add 1 Book", async () => {
   const book = {
-    author_id: "3",
+    author_id: "6",
     title: "The Book of John",
     pub_year: "2023",
     genre: "Fiction",
   }
   let result = await axios.post(`${baseUrl}/api/books`, { book });
   const data = result.data;
-  expect(data.message).toEqual("Successfully added. Book ID is 3");
+  expect(data.message).toEqual("Successfully added. Book ID is 7");
 });
 
 test("Get all authors", async () => {
@@ -36,7 +36,7 @@ test("Get all authors", async () => {
 });
 
 test("Get author with ID", async () => {
-  let id = `3`;
+  let id = `6`;
   let result = await axios.get(`${baseUrl}/api/authors/${id}`);
   expect(result.status).toEqual(200);
 });
@@ -47,13 +47,13 @@ test("Get all books", async () => {
 });
 
 test("Get book with ID", async () => {
-  let id = `3`;
+  let id = `7`;
   let result = await axios.get(`${baseUrl}/api/books/${id}`);
   expect(result.status).toEqual(200);
 });
 
 test("Get books with year", async () => {
-  let year = "2022";
+  let year = "2023";
   let result = await axios.get(`${baseUrl}/api/books?year=${year}`);
   expect(result.data[0].title).toEqual("The Book of John");
   expect(result.status).toEqual(200);
@@ -61,26 +61,26 @@ test("Get books with year", async () => {
 
 test("Update book", async () => {
   const book = {
-    id: "3",
+    id: "7",
     title: "The of John",
     pub_year: "2021"
   }
-  let result = await axios.put(`${baseUrl}/api/books/3`, { book });
+  let result = await axios.put(`${baseUrl}/api/books/7`, { book });
   expect(result.status).toEqual(200);
 });
 
 test("Update author", async () => {
   const author = {
-    id: "3",
+    id: "6",
     bio: "A gentleman."
   }
-  let result = await axios.put(`${baseUrl}/api/authors/3`, { author });
+  let result = await axios.put(`${baseUrl}/api/authors/6`, { author });
   expect(result.status).toEqual(200);
 });
 
 test("Create book with invalid year", async () => {
   const book = {
-    author_id: "3",
+    author_id: "6",
     title: "The Book of John",
     pub_year: "2020a",
     genre: "Fiction",
@@ -200,7 +200,7 @@ test("Delete book fail, !book found ", async () => {
 
 test("Delete author fail due to existing book", async () => {
   try {
-    await axios.delete(`${baseUrl}/api/authors/3`);
+    await axios.delete(`${baseUrl}/api/authors/6`);
   } catch (error) {
     let errorObj = error as AxiosError;
     if (errorObj.response === undefined) {
@@ -213,11 +213,11 @@ test("Delete author fail due to existing book", async () => {
 });
 
 test("Delete a book", async () => {
-  let result = await axios.delete(`${baseUrl}/api/books/3`);
+  let result = await axios.delete(`${baseUrl}/api/books/7`);
   expect(result.status).toEqual(200);
 });
 
 test("Delete an author", async () => {
-    let result = await axios.delete(`${baseUrl}/api/authors/3`);
+    let result = await axios.delete(`${baseUrl}/api/authors/6`);
     expect(result.status).toEqual(200);
 });
