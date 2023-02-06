@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import axios, { AxiosError } from 'axios';
 import { Error } from '../../src/type';
+import { TextField, 
+         Button,
+         Typography,
+         Box 
+        } from '@mui/material';
+import Container from '@mui/material/Container';
 
 function Author() {
   const [name, setName] = useState('');
@@ -37,18 +43,35 @@ function Author() {
 
   return (
     <div className="row">
-      <h2 style={{backgroundColor: "lightpink"}}>Add an Author</h2>
-      <div className="d-flex mt-1 justify-content-between col-6">
-        <label> <h5>Name</h5> </label>
-        <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
-        </div>
-      <div className="d-flex mt-1 justify-content-between col-6">
-        <label> <h5>Bio </h5></label>
-          <input type="text" value={bio} onChange={(e) => setBio(e.target.value)} />
+    <Container component="main" sx={{ mt: 0, mb: 5 }} maxWidth="lg">
+    <Typography variant="h4" color="lightpink"><b>Add an Author</b></Typography>
+    <Box
+      component="form"
+      sx={{
+        '& .MuiTextField-root': { m: 1, width: '25ch' },
+      }}
+      noValidate
+      autoComplete="off"
+    >
+      <div>
+          <TextField
+            required
+            id="outlined-required"
+            label="Name"
+            onChange={(e) => setName(e.target.value)}
+          />
+          <TextField
+            required
+            id="outlined-required"
+            label="Bio"
+            onChange={(e) => setBio(e.target.value)}
+          />
+          <div>
+          <Button variant="outlined" onClick={addAuthor} sx={{ color: '#fd8496' }}>Add Author</Button>
+          </div>
       </div>
-      <div className="row justify-content-center">
-        <button className="btn btn-outline-primary mt-3 col-1" onClick={addAuthor}>Add Author</button>
-      </div>
+    </Box>
+    </Container>
     </div>
   )
 }
