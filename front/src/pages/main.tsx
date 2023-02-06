@@ -10,8 +10,8 @@ function Main() {
   return (
     <HashRouter>
       <Routes>
-        <Route path="/" element={<Layout />}>
         <Route path="/" element={<Home />} />
+        <Route path="/" element={<Layout />}>
           <Route path="/authors" element={<AllAuthor />} />
           <Route path="/authors/:id" element={<UpdateAuthor />}/>
           <Route path="/books" element={<AllBook />} />
