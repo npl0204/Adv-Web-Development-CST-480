@@ -39,7 +39,7 @@ export default function Home() {
         }}
       >
         <Container maxWidth="sm">
-          <Typography variant="body1">
+          <Typography variant="body1" align="center">
             Linh Nguyen - CS T480
           </Typography>
         </Container>
