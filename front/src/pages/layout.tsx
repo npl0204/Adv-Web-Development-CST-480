@@ -5,15 +5,24 @@ import { Outlet, Link } from "react-router-dom";
 
 function Layout() {
   return (
-    <>
+    <div>
       <nav className="background-color: #f45d49 nav-class">
-      <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" /> < Link to="/">Home</Link> 
-      | <AccountCircleIcon sx={{ mr: 0.5 }} fontSize="inherit" /> <Link to="/authors">Authors</Link>  
-      | <AutoStoriesIcon sx={{ mr: 0.5 }} fontSize="inherit" /> <Link to="/books">Books</Link>
+        < Link to="/" style={{ color: '#fd8496', textDecoration: 'inherit' }}>
+          <HomeIcon fontSize="small" style={{ color: '#ffe8ec' }}/>
+          Home&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        </Link> 
+        <Link to="/authors" style={{ color: '#fd8496', textDecoration: 'inherit' }}>
+          <AccountCircleIcon fontSize="small" style={{ color: '#ffe8ec' }}/>
+          Authors&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        </Link>      
+        <Link to="/books" style={{ color: '#fd8496', textDecoration: 'inherit' }}>
+          <AutoStoriesIcon fontSize="small" style={{ color: '#ffe8ec' }}/>
+          Books&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </Link>
       </nav>
 
       <Outlet />
-    </>
+    </div>
   );
 }
 
