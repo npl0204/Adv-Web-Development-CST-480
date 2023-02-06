@@ -13,18 +13,6 @@ let db = await open({
 });
 await db.get("PRAGMA foreign_keys = ON");
 
-// Set up example for HW2
-let a = await db.all("SELECT * FROM authors");
-if(a.length === 0) {
-  await db.run(`INSERT INTO authors(id, name, bio) VALUES (1, "John Doe", "John Doe is a Fiction writer")`);
-  await db.run(`INSERT INTO authors(id, name, bio) VALUES (2, "Jane Doe", "Jane Doe is a Romance writer")`);
-}
-let b = await db.all("SELECT * FROM books");
-if(b.length === 0) {
-  await db.run(`INSERT INTO books(id, author_id, title, pub_year, genre) VALUES (1, 1, "Book of Fiction", 2020, "Fiction")`);
-  await db.run(`INSERT INTO books(id, author_id, title, pub_year, genre) VALUES (2, 2, "Book of Romance", 2010, "Romance")`);
-}
-
 // get all books or get all books on or after a certain year
 app.get("/api/books", async (req, res: BookResponse) => {
   const year = req.query.year;
