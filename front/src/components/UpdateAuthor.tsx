@@ -2,6 +2,14 @@ import React, { useState } from 'react';
 import axios, { AxiosError } from 'axios';
 import { Error } from '../type';
 import { useParams, Link } from 'react-router-dom'
+import { TextField, 
+         MenuItem, 
+         Typography,
+         Box,
+         Button 
+        } from '@mui/material';
+import Container from '@mui/material/Container';
+import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 
 function UpdateAuthor() {
   const { id } = useParams();
@@ -41,23 +49,41 @@ function UpdateAuthor() {
 
   return (
     <>
-		<Link to='/authors'>Go back</Link>
-      <div className="row">
-        <h2 style={{backgroundColor: "lightpink"}}>Update an Author</h2>
-        <div className="d-flex mt-1 justify-content-between col-6">
-          <label> <h5>Name</h5> </label>
-          <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+		<Link to='/authors' style={{ color: '#fd8496', textDecoration: 'inherit' }}>
+          <ArrowLeftIcon fontSize="small"/>
+          Go back
+    </Link>
+    <div className="row">
+    <Container component="main" sx={{ mt: 8, mb: 2 }} maxWidth="sm">
+    <Typography variant="h5" color="lightpink"><b>Update Author</b></Typography>
+    <Box
+      component="form"
+      sx={{
+        '& .MuiTextField-root': { m: 1, width: '25ch' },
+      }}
+      noValidate
+      autoComplete="off"
+    >
+      <div>
+          <TextField
+            id="outlined-required"
+            label="Name"
+            onChange={(e) => setName(e.target.value)}
+          />
+          <TextField
+            id="outlined-required"
+            label="Bio"
+            onChange={(e) => setBio(e.target.value)}
+          />
+          <div>
+          <Button variant="outlined" onClick={update} sx={{ color: '#fd8496' }}>Update</Button>
           </div>
-        <div className="d-flex mt-1 justify-content-between col-6">
-          <label> <h5>Bio</h5></label>
-            <input type="text" value={bio} onChange={(e) => setBio(e.target.value)} />
-        </div>
-        <div className="row justify-content-center">
-          <button className="btn btn-outline-primary mt-3 mb-3 col-1" onClick={update}>Update</button>
-        </div>
       </div>
+    </Box>
+    </Container>
+    </div>
 		</>
-  )
+  );
 }
 
 export default UpdateAuthor;
