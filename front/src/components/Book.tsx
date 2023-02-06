@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios, { AxiosError } from 'axios';
 import { AuthorType, Error } from '../../src/type';
-import { Autocomplete, 
-         TextField, 
-         AppBar, 
-         InputLabel, 
-         Select, 
-         OutlinedInput, 
-         SelectChangeEvent, 
+import { TextField, 
          MenuItem, 
-         MenuProps, 
-         Button } from '@mui/material';
+         Button,
+         Typography,
+         Box 
+        } from '@mui/material';
+import Container from '@mui/material/Container';
 
 function Book() {
   const [authors, setAuthors] = useState([] as AuthorType[])
@@ -58,114 +55,62 @@ function Book() {
     }
   };
 
-  function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
-    setAuthorId(e.target.value);
-  }
-
-  // const handleChange = (e: SelectChangeEvent<typeof authorId>) => {
-  //   setAuthorId(e.target.value);
-  // };
-
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  const MenuProps = {
-    PaperProps: {
-      style: {
-        maxHeight: 48 * 4.5 + 8,
-        width: 250,
-      },
-    },
-  };
-
   return (
     <div className="row">
-      <h2 style={{backgroundColor: "lightpink"}}>Add a Book</h2>
-      <div >
-          {/* <InputLabel id="demo-multiple-name-label">Author</InputLabel>
-          <Select
-            labelId="demo-multiple-name-label"
-            id="demo-multiple-name"
-            multiple
-            //value={authorId}
-            onChange={handleChange}
-            input={<OutlinedInput label="Author" />}
-            MenuProps={MenuProps}
+    <Container component="main" sx={{ mt: 0, mb: 5 }} maxWidth="lg">
+    <Typography variant="h4" color="lightpink"><b>Add a Book</b></Typography>
+    <Box
+      component="form"
+      sx={{
+        '& .MuiTextField-root': { m: 1, width: '25ch' },
+      }}
+      noValidate
+      autoComplete="off"
+    >
+      <div>
+          <TextField
+            required
+            id="outlined-required"
+            select
+            label="Author"
+            variant="outlined"
+            onChange={(e) => setAuthorId(e.target.value)}
           >
             {authors.map((author) => (
               <MenuItem
                 key={author.id}
-                value={author.name}
-              >
+                value={author.id}
+              > { author.name }
               </MenuItem>
             ))}
-          </Select> */}
-          <div className="d-flex mt-1 justify-content-between col-6">
-            <label> <h5>Author</h5></label>
-            <select value={authorId} onChange={handleChange}>
-                <option value="">Select an author</option>
-            { authors.map((author) => (
-                <option key={author.id} value={author.id}>{ author.name }</option>
-            ))}
-            </select>
-          </div>
-          <div><TextField
+          </TextField>
+          <TextField
             required
             id="outlined-required"
             label="Title"
             onChange={(e) => setTitle(e.target.value)}
           />
-          </div>
-          <div>
           <TextField
             required
             id="outlined-required"
             label="Publication Year"
             onChange={(e) => setPubYear(e.target.value)}
           />
-          </div>
-          <div>
           <TextField
             required
             id="outlined-required"
             label="Genre"
             onChange={(e) => setGenre(e.target.value)}
           />
-          </div>
-          <div>
-          <Button variant="outlined" onClick={addBook}>Add Book</Button>
-          </div>
-        </div>
+          <div><Button variant="outlined" onClick={addBook} sx={{ color: '#fd8496' }}>Add Book</Button></div>
       </div>
-
-    // <div className="row">
-    //   <h2 style={{backgroundColor: "lightpink"}}>Add a Book</h2>
-    //   <div className="d-flex mt-1 justify-content-between col-6">
-    //     <label> <h5>Author</h5></label>
-    //     <select value={authorId} onChange={handleChange}>
-    //         <option value="">Select an author</option>
-    //     { authors.map((author) => (
-    //         <option key={author.id} value={author.id}>{ author.name }</option>
-    //     ))}
-    //     </select>
-    //   </div>
-    //   <div className="d-flex mt-1 justify-content-between col-6">
-    //     <label> <h5>Title</h5> </label>
-    //     <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
-    //     </div>
-    //   <div className="d-flex mt-1 justify-content-between col-6">
-    //     <label> <h5>Publication Year </h5></label>
-    //       <input type="text" value={pubYear} onChange={(e) => setPubYear(e.target.value)} />
-    //   </div>
-    //   <div className="d-flex mt-1 justify-content-between col-6">
-    //     <label> <h5>Genre</h5> </label>
-    //     <input type="text" value={genre} onChange={(e) => setGenre(e.target.value)} />
-    //   </div>
-    //   <div className="row justify-content-center">
-    //     <button className="btn btn-outline-primary mt-3 mb-3 col-1" onClick={addBook}>Add Book</button>
-    //   </div>
-    // </div>
+    </Box>
+    </Container>
+    </div>
   )
 }
 
