@@ -1,106 +1,172 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import Author from './Author';
-import { BookType } from '../../src/type';
+import axios, { AxiosError } from 'axios';
+import { AuthorType, Error } from '../../src/type';
+import { Autocomplete, 
+         TextField, 
+         AppBar, 
+         InputLabel, 
+         Select, 
+         OutlinedInput, 
+         SelectChangeEvent, 
+         MenuItem, 
+         MenuProps, 
+         Button } from '@mui/material';
 
-function Books() {
+function Book() {
+  const [authors, setAuthors] = useState([] as AuthorType[])
+  const [title, setTitle] = useState('');
+  const [pubYear, setPubYear] = useState('');
+  const [genre, setGenre] = useState('');
   const [loading, setLoading] = useState(true);
-  const [books, setBooks] = useState([] as BookType[]);
-  const [searchInput, setSearchInput] = useState("");
-  const [sortedBooks, setSortedBook] = useState([] as BookType[]);
+  const [authorId, setAuthorId] = useState('');
 
-  // use axios to fetch books from backend
   useEffect(() => {
-    console.log("Getting data")
-    axios.get('/api/books').then((res) => {
-      setBooks(res.data);
-      setSortedBook(sortBooks(res.data));
-      setLoading(false);
-    });
+      axios.get('/api/authors').then((res) => {
+          setAuthors(res.data);
+          setLoading(false);
+        });
   }, []);
+
+  async function addBook(e: React.FormEvent) {
+    e.preventDefault();
+    if(title.length === 0 || pubYear.length === 0 || genre.length === 0 || authorId.length === 0) {
+      alert('Please fill out all Book fields');
+      return;
+    }
+    try {
+      await axios.post('/api/books',{
+        book: {
+          title: title,
+          pub_year: pubYear,
+          genre: genre,
+          author_id: authorId
+        }
+      }).then((res) => {
+        alert(res.data.message);
+        window.location.reload();
+        console.log(res.data);
+      });
+    } catch(error) {
+      let errorObj = error as AxiosError;
+      if (errorObj.response === undefined) {
+        throw errorObj;
+      }
+      let { response } = errorObj;
+      let data = response.data as Error;
+      alert(data.error);
+      console.log(response);
+    }
+  };
+
+  function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    setAuthorId(e.target.value);
+  }
+
+  // const handleChange = (e: SelectChangeEvent<typeof authorId>) => {
+  //   setAuthorId(e.target.value);
+  // };
 
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  if (books.length === 0) {
-    return  <div className="row">
-      <h2 style={{backgroundColor: "lightpink"}}>All Books</h2>
-      <input
-        className="form-control col-12 mt-3 mb-3"
-        type="search"
-        placeholder="Display all Books Published after Year ..."
-        value={searchInput} 
-        onChange={handleChangeYear}/>
-      <h5 className="alert"> No books found</h5>
-    </div>;
-  }
-
-  function handleChangeYear(event: React.ChangeEvent<HTMLInputElement>) {
-    setSearchInput(event.target.value);
-    let value = event.target.value;
-    if(isNaN(Number(event.target.value))) {
-      value = "";
-      alert("Please enter a valid year. Year must be a number.");
-    }
-    if (value === "") {
-      setSortedBook(sortBooks(books));
-    }
-    const books_filtered = books.filter((book) => {
-      return Number(book.pub_year) >= Number(value);
-    });
-    setSortedBook(sortBooks(books_filtered));
-  }
-
-  function sortBooks(books: BookType[]) {
-    return books.sort((a, b) => {
-      return a.title.localeCompare(b.title);
-    });
-  }
+  const MenuProps = {
+    PaperProps: {
+      style: {
+        maxHeight: 48 * 4.5 + 8,
+        width: 250,
+      },
+    },
+  };
 
   return (
     <div className="row">
-    <h2 style={{backgroundColor: "lightpink"}}>All Books</h2>
-    <input
-      className="form-control col-12 mt-3 mb-3"
-      type="search"
-      placeholder="Display all Books Published after Year ..."
-      value={searchInput} 
-      onChange={handleChangeYear}/>
-    <table className="table table-hover table-bordered mt-3">
-      <thead>
-        <tr>
-          <th>Book</th>
-          <th>Book ID</th>
-          <th>Author ID</th>
-          <th>Publication Year</th>
-          <th>Genre</th>
-        </tr>
-      </thead>
-      <tbody>
-          { sortedBooks.map((book) => (
-            <tr key={book.id}>
-              <td>
-                <a href={`/api/books/${book.id}`}>{ book.title }</a>
-              </td>
-              <td>
-                { book.id } 
-              </td>
-              <td>
-                { book.author_id }
-              </td>
-              <td> 
-                { book.pub_year }
-              </td>
-              <td> 
-                { book.genre }
-              </td>
-            </tr>
-          ))}
-      </tbody>
-    </table>
-    </div>
-  );
+      <h2 style={{backgroundColor: "lightpink"}}>Add a Book</h2>
+      <div >
+          {/* <InputLabel id="demo-multiple-name-label">Author</InputLabel>
+          <Select
+            labelId="demo-multiple-name-label"
+            id="demo-multiple-name"
+            multiple
+            //value={authorId}
+            onChange={handleChange}
+            input={<OutlinedInput label="Author" />}
+            MenuProps={MenuProps}
+          >
+            {authors.map((author) => (
+              <MenuItem
+                key={author.id}
+                value={author.name}
+              >
+              </MenuItem>
+            ))}
+          </Select> */}
+          <div className="d-flex mt-1 justify-content-between col-6">
+            <label> <h5>Author</h5></label>
+            <select value={authorId} onChange={handleChange}>
+                <option value="">Select an author</option>
+            { authors.map((author) => (
+                <option key={author.id} value={author.id}>{ author.name }</option>
+            ))}
+            </select>
+          </div>
+          <div><TextField
+            required
+            id="outlined-required"
+            label="Title"
+            onChange={(e) => setTitle(e.target.value)}
+          />
+          </div>
+          <div>
+          <TextField
+            required
+            id="outlined-required"
+            label="Publication Year"
+            onChange={(e) => setPubYear(e.target.value)}
+          />
+          </div>
+          <div>
+          <TextField
+            required
+            id="outlined-required"
+            label="Genre"
+            onChange={(e) => setGenre(e.target.value)}
+          />
+          </div>
+          <div>
+          <Button variant="outlined" onClick={addBook}>Add Book</Button>
+          </div>
+        </div>
+      </div>
+
+    // <div className="row">
+    //   <h2 style={{backgroundColor: "lightpink"}}>Add a Book</h2>
+    //   <div className="d-flex mt-1 justify-content-between col-6">
+    //     <label> <h5>Author</h5></label>
+    //     <select value={authorId} onChange={handleChange}>
+    //         <option value="">Select an author</option>
+    //     { authors.map((author) => (
+    //         <option key={author.id} value={author.id}>{ author.name }</option>
+    //     ))}
+    //     </select>
+    //   </div>
+    //   <div className="d-flex mt-1 justify-content-between col-6">
+    //     <label> <h5>Title</h5> </label>
+    //     <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
+    //     </div>
+    //   <div className="d-flex mt-1 justify-content-between col-6">
+    //     <label> <h5>Publication Year </h5></label>
+    //       <input type="text" value={pubYear} onChange={(e) => setPubYear(e.target.value)} />
+    //   </div>
+    //   <div className="d-flex mt-1 justify-content-between col-6">
+    //     <label> <h5>Genre</h5> </label>
+    //     <input type="text" value={genre} onChange={(e) => setGenre(e.target.value)} />
+    //   </div>
+    //   <div className="row justify-content-center">
+    //     <button className="btn btn-outline-primary mt-3 mb-3 col-1" onClick={addBook}>Add Book</button>
+    //   </div>
+    // </div>
+  )
 }
 
-export default Books;
+export default Book;
