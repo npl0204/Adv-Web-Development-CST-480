@@ -1,22 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios, { AxiosError } from 'axios';
 import { Error } from '../type';
 import { useParams, Link } from 'react-router-dom'
-import { TextField, 
-         MenuItem, 
+import { TextField,  
          Typography,
          Box,
          Button 
         } from '@mui/material';
 import Container from '@mui/material/Container';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
+import { AuthorType } from '../../src/type';
 
 function UpdateAuthor() {
   const { id } = useParams();
   
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
-  // const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [author, setAuthor] = useState<AuthorType>({ id:`${id}`, name: '', bio: '' });
+
+  useEffect(() => {
+    console.log("Getting data")
+    axios.get(`/api/authors/${id}`).then((res) => {
+      setAuthor(res.data[0]);
+      setLoading(false);
+      console.log(res.data);
+    });
+  }, []);
 
   async function update(e: React.FormEvent) {
     e.preventDefault();
@@ -43,9 +53,9 @@ function UpdateAuthor() {
     }
   };
 
-  // if (loading) {
-  //   return <div>Loading...</div>;
-  // }
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
@@ -68,11 +78,14 @@ function UpdateAuthor() {
           <TextField
             id="outlined-required"
             label="Name"
+            defaultValue={author.name}
             onChange={(e) => setName(e.target.value)}
           />
           <TextField
             id="outlined-required"
             label="Bio"
+            defaultValue={author.bio}
+            multiline
             onChange={(e) => setBio(e.target.value)}
           />
           <div>
