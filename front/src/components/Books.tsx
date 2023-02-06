@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios, { AxiosError } from 'axios';
 import { BookType, Error } from '../../src/type';
 import { Link } from 'react-router-dom';
-import { Button, IconButton } from '@mui/material';
+import { Typography, IconButton, Input, FormControl, FormHelperText } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -11,6 +11,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import Container from '@mui/material/Container';
 
 function Books() {
   const [loading, setLoading] = useState(true);
@@ -34,14 +35,14 @@ function Books() {
 
   if (books.length === 0) {
     return  <div className="row">
-      <h2 style={{backgroundColor: "lightpink"}}>All Books</h2>
+      <Typography variant="h4" color="lightpink"><b>All Books</b></Typography>
       <input
         className="form-control col-12 mt-3 mb-3"
         type="search"
         placeholder="Display all Books Published after Year ..."
         value={searchInput} 
         onChange={handleChangeYear}/>
-      <h5 className="alert"> No books found</h5>
+      <Typography variant="h6" className="alert"> No books found</Typography>
     </div>;
   }
 
@@ -90,9 +91,19 @@ function Books() {
 
   return (
     <div className="row">
-    <h2 style={{backgroundColor: "lightpink"}}>All Books</h2>
+    <Container component="main" sx={{ mt: 5, mb: 2 }} maxWidth="lg">
+    <Typography variant="h4" color="lightpink"><b>All Books</b></Typography>
+    <FormControl fullWidth>
+      <Input
+            aria-describedby="my-helper-text" 
+            onChange={handleChangeYear} 
+            placeholder="Display Books Published after Year ..."
+            value={searchInput} />
+    </FormControl>
+    </Container>
+    <Container component="main" sx={{ mt: 0, mb: 5 }} maxWidth="lg">
     <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+      <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
         <TableHead>
           <TableRow>
             <TableCell><b>Book</b></TableCell>
@@ -110,9 +121,9 @@ function Books() {
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               <TableCell component="th" scope="book">
-                <Link to={`/books/${book.id}`}>
+                <Link to={`/books/${book.id}`} style={{ color: '#fd8496', textDecoration: 'inherit' }}>
                   <p>
-                    <span className="normal">{ book.title }</span>
+                    <span className="normal"><b>{ book.title }</b></span>
                   </p>
                 </Link>
               </TableCell>
@@ -130,54 +141,8 @@ function Books() {
         </TableBody>
       </Table>
     </TableContainer>
-
-    {/* <input
-      className="form-control col-12 mt-3 mb-3"
-      type="search"
-      placeholder="Display all Books Published after Year ..."
-      value={searchInput} 
-      onChange={handleChangeYear}/>
-    <table className="table table-hover table-bordered mt-3">
-      <thead>
-        <tr>
-          <th>Book</th>
-          <th>Book ID</th>
-          <th>Author ID</th>
-          <th>Publication Year</th>
-          <th>Genre</th>
-        </tr>
-      </thead>
-      <tbody>
-          { sortedBooks.map((book) => (
-            <tr key={book.id}>
-              <td>
-                <Link to={`/books/${book.id}`}>
-                  <p>
-                    <span className="normal">{ book.title }</span>
-                  </p>
-                </Link>
-              </td>
-              <td>
-                { book.id } 
-              </td>
-              <td>
-                { book.author_id }
-              </td>
-              <td> 
-                { book.pub_year }
-              </td>
-              <td> 
-                { book.genre }
-              </td>
-              <td> 
-                <IconButton aria-label="delete" onClick={(e) => handleDelete(book.id, e)}>
-                  <DeleteIcon />
-                </IconButton>
-              </td>
-            </tr>
-          ))}
-      </tbody>
-    </table> */}
+    <Typography variant="caption">Click book's name to update book's information</Typography>
+    </Container>
     </div>
   );
 }
