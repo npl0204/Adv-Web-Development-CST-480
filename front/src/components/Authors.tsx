@@ -1,7 +1,17 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { AuthorType } from '../../src/type';
+import React, { useState, useEffect } from 'react';
+import axios, { AxiosError } from 'axios';
+import { AuthorType, Error } from '../../src/type';
 import { Link } from 'react-router-dom';
+import { Typography, IconButton, Input, FormControl } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Paper from '@mui/material/Paper';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Container from '@mui/material/Container';
 
 function Authors() {
   const [loading, setLoading] = useState(true);
@@ -24,37 +34,74 @@ function Authors() {
     return <div>No authors found</div>;
   }
 
+  async function handleDelete(id: any, e: React.FormEvent) {
+    e.preventDefault();
+    try {
+      await axios.delete(`/api/authors/${id}`)
+      .then((res) => {
+        alert("Author was deleted.");
+        window.location.reload();
+        console.log(res.data);
+      });
+    } catch(error) {
+      let errorObj = error as AxiosError;
+      if (errorObj.response === undefined) {
+        throw errorObj;
+      }
+      let { response } = errorObj;
+      let data = response.data as Error;
+      alert(data.error);
+      console.log(response);
+    }
+  }
+
   return (
     <div className="row">
-    <h2 style={{backgroundColor: "lightpink"}}>All Authors</h2>
-    <table className="table table-hover table-bordered mt-3">
-      <thead>
-        <tr>
-          <th>Author</th>
-          <th>Author ID</th>
-          <th>Bio</th>
-        </tr>
-      </thead>
-      <tbody>
-          { authors.map((author) => (
-            <tr key={author.id}>
-              <td>
-                <Link to={`/authors/${author.id}`}>
+    <Container component="main" sx={{ mt: 5, mb: 5 }} maxWidth="lg">
+    <Typography variant="h4" color="lightpink"><b>All Author</b></Typography>
+    <TableContainer component={Paper}>
+      <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+        <colgroup>
+            <col width="15%" />
+            <col width="10%" />
+            <col width="65%" />
+            <col width="10%" />
+        </colgroup>
+        <TableHead>
+          <TableRow>
+            <TableCell><b>Author</b></TableCell>
+            <TableCell align="center"><b>Author ID</b></TableCell>
+            <TableCell align="center"><b>Bio</b></TableCell>
+            <TableCell align="center"><b>Delete</b></TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {authors.map((author) => (
+            <TableRow
+              key={author.id}
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <TableCell component="th" scope="author">
+                <Link to={`/authors/${author.id}`} style={{ color: '#fd8496', textDecoration: 'inherit' }}>
                   <p>
-                    <span className="normal">{ author.name }</span>
+                    <span className="normal"><b>{ author.name }</b></span>
                   </p>
                 </Link>
-              </td>
-              <td>
-                { author.id }
-              </td>
-              <td> 
-                { author.bio }
-              </td>
-            </tr>
+              </TableCell>
+              <TableCell align="center">{author.id}</TableCell>
+              <TableCell align="left">{author.bio}</TableCell>
+              <TableCell align="center"> 
+                <IconButton aria-label="delete" onClick={(e) => handleDelete(author.id, e)}>
+                  <DeleteIcon />
+                </IconButton>
+              </TableCell>
+            </TableRow>
           ))}
-      </tbody>
-    </table>
+        </TableBody>
+      </Table>
+    </TableContainer>
+    <Typography variant="caption">Click author's name to update author's information</Typography>
+    </Container>
     </div>
   );
 }
