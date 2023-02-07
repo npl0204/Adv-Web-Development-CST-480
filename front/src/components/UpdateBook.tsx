@@ -37,23 +37,24 @@ function UpdateBook() {
     });
   }, []);
 
-  let author = authors.find((author: AuthorType) => author.id === book.author_id);
-  let name
-  if (author) {
-    name = author.name;
+  let a = authors.find((a: AuthorType) => a.id === book.author_id);
+  let n
+  if (a) {
+    n = a.name;
   } else {
-    name = ''
+    n = ''
   }
+  console.log(n)
 
   async function update(e: React.FormEvent) {
     e.preventDefault();
     try {
       await axios.put(`/api/books/${id}`,{
         book: {
-          title: title,
-          pub_year: pubYear,
-          genre: genre,
-          author_id: authorId
+          title: title || book.title,
+          pub_year: pubYear || book.pub_year,
+          genre: genre || book.genre,
+          author_id: authorId || book.author_id
         }
       }).then((res) => {
         alert("Book's information was updated successfully.");
@@ -99,35 +100,35 @@ function UpdateBook() {
     >
       <div>
           <TextField
-            id="outlined-required"
+            id="outlined"
             select
             label="Author"
             variant="outlined"
-            defaultValue={name}
+            defaultValue={n}
             onChange={(e) => setAuthorId(e.target.value)}
           >
             {authors.map((author) => (
               <MenuItem
                 key={author.id}
-                value={author.name}
-              > {author.name}
+                value={author.id}
+              > { author.name }
               </MenuItem>
             ))}
           </TextField>
           <TextField
-            id="outlined-required"
+            id="outlined"
             label="Title"
             defaultValue={book.title}
             onChange={(e) => setTitle(e.target.value)}
           />
           <TextField
-            id="outlined-required"
+            id="outlined"
             label="Publication Year"
             defaultValue={book.pub_year}
             onChange={(e) => setPubYear(e.target.value)}
           />
           <TextField
-            id="outlined-required"
+            id="outlined"
             label="Genre"
             defaultValue={book.genre}
             onChange={(e) => setGenre(e.target.value)}
