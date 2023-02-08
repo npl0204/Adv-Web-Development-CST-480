@@ -3,6 +3,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import User from '../components/User';
 
 
 export default function Home() {
@@ -24,6 +25,7 @@ export default function Home() {
             <li>Choose <Link to="/authors" style={{ color: '#fd8496' }}>Authors</Link> to see list or all authors or to add an author. </li>
             <li>Choose <Link to="/books" style={{ color: '#fd8496' }}>Books</Link> to see list or all books or to add a book. </li>
           </ul>
+          <User />
         </Typography>
       </Container>
       <Box

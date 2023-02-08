@@ -2,18 +2,18 @@ import React, { useState, useEffect } from 'react';
 import axios, { AxiosError } from 'axios';
 import { BookType, AuthorType, Error } from '../type';
 import { useParams, Link } from 'react-router-dom'
-import { TextField, 
-  MenuItem, 
+import { TextField,
+  MenuItem,
   Typography,
   Box,
-  Button 
+  Button
  } from '@mui/material';
 import Container from '@mui/material/Container';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 
 function UpdateBook() {
   const { id } = useParams();
-  
+
   const [authors, setAuthors] = useState([] as AuthorType[]);
   const [title, setTitle] = useState('');
   const [pubYear, setPubYear] = useState('');
@@ -23,28 +23,20 @@ function UpdateBook() {
   const [book, setBook] = useState<BookType>({ id:`${id}`, title: '', pub_year: '', author_id: '', genre: '' });
 
   useEffect(() => {
-    console.log("Getting data")
+    fetchData();
+  }, []);
+
+  const fetchData = () => {
+    console.log("Getting datas")
     axios.get(`/api/books/${id}`).then((res) => {
       setBook(res.data[0]);
       setLoading(false);
     });
-  }, []);
-
-  useEffect(() => {
     axios.get('/api/authors').then((res) => {
       setAuthors(res.data);
       setLoading(false);
-    });
-  }, []);
-
-  let a = authors.find((a: AuthorType) => a.id === book.author_id);
-  let n
-  if (a) {
-    n = a.name;
-  } else {
-    n = ''
+    })
   }
-  console.log(n)
 
   async function update(e: React.FormEvent) {
     e.preventDefault();
@@ -104,7 +96,7 @@ function UpdateBook() {
             select
             label="Author"
             variant="outlined"
-            defaultValue={n}
+            defaultValue={book.author_id}
             onChange={(e) => setAuthorId(e.target.value)}
           >
             {authors.map((author) => (
