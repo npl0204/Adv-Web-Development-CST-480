@@ -26,6 +26,14 @@ function User() {
     if(token) {
       setToken(token);
       setMessage('Logged in');
+    }
+  }, [token]);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if(token) {
+      setToken(token);
+      setMessage('Logged in');
     } else {
       setMessage('Not authorized');
     }

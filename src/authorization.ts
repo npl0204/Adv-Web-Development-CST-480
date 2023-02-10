@@ -71,6 +71,7 @@ async function logout(req: Request, res: Response<EmptyResponse>) {
   return res.clearCookie("token", cookieOptions).send();
 }
 
+<<<<<<< HEAD
 async function signup(req: Request, res: Response<MessageResponse>) {
   let { username, password } = req.body;
   let user = await db.get("SELECT * FROM users WHERE username = ?", username)
