@@ -1,9 +1,12 @@
-import express, { Response } from "express";
+import express from "express";
 import sqlite3 from "sqlite3";
 import { open } from "sqlite";
 import { Book, Author, BookResponse, AuthorResponse, PostResponse } from "./type.js";
+import cookieParser from "cookie-parser";
+import { login, logout, signup, authorizeUser, authorizeAdmin } from "./authorization.js";
 
 let app = express();
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.static("public"));
 
@@ -11,7 +14,13 @@ let db = await open({
     filename: "../database.db",
     driver: sqlite3.Database,
 });
+
 await db.get("PRAGMA foreign_keys = ON");
+
+/* AUTHORIZATION */
+app.post("/login", login);
+app.post("/logout", logout);
+app.post("/signup", signup);
 
 // get all books or get all books on or after a certain year
 app.get("/api/books", async (req, res: BookResponse) => {
@@ -45,7 +54,7 @@ app.get("/api/books/:id", async (req, res: BookResponse) => {
 });
 
 // insert a book
-app.post("/api/books", async (req, res: PostResponse) => {
+app.post("/api/books", authorizeUser, async (req, res: PostResponse) => {
   const book = req.body.book;
   if (!book) {
     return res.status(400).json({ error: "Book is required" });
@@ -60,7 +69,7 @@ app.post("/api/books", async (req, res: PostResponse) => {
   let b = await db.all("SELECT * FROM books")
   let id = b.length > 0 ? `${Math.max(...b.map((book: Book) => Number(book.id))) + 1}` : "1";
   let INSERT_SQL = await db.prepare(
-    "INSERT INTO books(id, author_id, title, pub_year, genre) VALUES (?, ?, ?, ?, ?)" 
+    "INSERT INTO books(id, author_id, title, pub_year, genre) VALUES (?, ?, ?, ?, ?)"
   );
   await INSERT_SQL.bind([id, book.author_id, book.title, book.pub_year, book.genre]);
   await INSERT_SQL.run().then(() => {
@@ -69,7 +78,7 @@ app.post("/api/books", async (req, res: PostResponse) => {
 });
 
 // put to update a book
-app.put("/api/books/:id", async (req, res: BookResponse) => {
+app.put("/api/books/:id", authorizeUser, async (req, res: BookResponse) => {
   const bookReq = req.body.book;
   const id = req.params.id;
 
@@ -81,7 +90,7 @@ app.put("/api/books/:id", async (req, res: BookResponse) => {
   if (book.length === 0) {
     return res.status(400).json({ error: `No books with ID ${id} found. Please check the books list to see valid book ID.` });
   }
-  
+
   const updates = [];
   if (bookReq.author_id) {
     let author = await db.all(`SELECT * FROM books WHERE id = '${bookReq.author_id}'`);
@@ -111,7 +120,7 @@ app.put("/api/books/:id", async (req, res: BookResponse) => {
 });
 
 // delete a book
-app.delete("/api/books/:id", async (req, res: BookResponse) => {
+app.delete("/api/books/:id", authorizeUser, async (req, res: BookResponse) => {
   const id = req.params.id;
   if (!id) {
     return res.status(400).json({ error: "ID is required" });
@@ -125,7 +134,7 @@ app.delete("/api/books/:id", async (req, res: BookResponse) => {
 });
 
 // AUTHOR
-// get all authors 
+// get all authors
 app.get("/api/authors", async (req, res: AuthorResponse) => {
   let authors = await db.all("SELECT * FROM authors");
   return res.status(200).json(authors);
@@ -146,7 +155,7 @@ app.get("/api/authors/:id", async (req, res: AuthorResponse) => {
 });
 
 // insert an author
-app.post("/api/authors", async (req, res: PostResponse) => {
+app.post("/api/authors", authorizeUser, async (req, res: PostResponse) => {
   const author = req.body.author;
   if (!author) {
     return res.status(400).json({ error: "Author is required" });
@@ -154,7 +163,7 @@ app.post("/api/authors", async (req, res: PostResponse) => {
   let a = await db.all("SELECT * FROM authors")
   let id = a.length > 0 ? `${Math.max(...a.map((author: Author) => Number(author.id))) + 1}` : "1";
   let INSERT_SQL = await db.prepare(
-    "INSERT INTO authors(id, name, bio) VALUES (?, ?, ?)" 
+    "INSERT INTO authors(id, name, bio) VALUES (?, ?, ?)"
   );
   await INSERT_SQL.bind([id, author.name, author.bio]);
   await INSERT_SQL.run().then(() => {
@@ -163,7 +172,7 @@ app.post("/api/authors", async (req, res: PostResponse) => {
 });
 
 // put to update a author
-app.put("/api/authors/:id", async (req, res: AuthorResponse) => {
+app.put("/api/authors/:id", authorizeUser, async (req, res: AuthorResponse) => {
   const authorReq = req.body.author;
   const id = req.params.id;
 
@@ -175,7 +184,7 @@ app.put("/api/authors/:id", async (req, res: AuthorResponse) => {
   if (author.length === 0) {
     return res.status(400).json({ error: `No authors with ID ${id} found. Please check the authors list to see valid author ID.` });
   }
-  
+
   const updates = [];
   if (authorReq.name) {
     updates.push(`name = "${authorReq.name}"`);
@@ -192,7 +201,7 @@ app.put("/api/authors/:id", async (req, res: AuthorResponse) => {
 });
 
 //  delete author but not delete author that has books
-app.delete("/api/authors/:id", async (req, res: AuthorResponse) => {
+app.delete("/api/authors/:id", authorizeUser, async (req, res: AuthorResponse) => {
   const id = req.params.id;
   if (!id) {
     return res.status(400).json({ error: "ID is required" });
