@@ -14,14 +14,21 @@ interface Author {
   bio: string;
 }
 
-interface Error { 
+interface Error {
   error: string;
 }
 
 interface Success {
   message: string;
-  table: Book | Author;  
+  table: Book | Author;
 }
+
+interface MessageResponse {
+  message: string;
+  token?: string;
+}
+
+type EmptyResponse = "";
 
 type BookResponse = Response<Book[] | Error>;
 
@@ -29,4 +36,4 @@ type AuthorResponse = Response<Author[] | Error>;
 
 type PostResponse = Response<Success | Error>;
 
-export { Book, Author, Error, Success, BookResponse, AuthorResponse, PostResponse };
+export { Book, Author, Error, Success, BookResponse, AuthorResponse, PostResponse, MessageResponse, EmptyResponse };
