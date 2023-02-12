@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import User from '../components/User';
+import { Divider } from '@mui/material';
 
 export default function Home() {
   return (
@@ -25,9 +26,10 @@ export default function Home() {
             <li>Choose <Link to="/books" style={{ color: '#fd8496' }}>Books</Link> to see list or all books. </li>
             <li>Log in to add, update, or delete book/author lists. </li>
           </ul>
-          <User />
         </Typography>
+        <Divider />
       </Container>
+      <User />
       <Box
         component="footer"
         sx={{
