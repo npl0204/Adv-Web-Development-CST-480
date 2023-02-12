@@ -27,8 +27,8 @@ export default function Home() {
             <li>Log in to add, update, or delete book/author lists. </li>
           </ul>
         </Typography>
-        <Divider />
       </Container>
+      <Divider />
       <User />
       <Box
         component="footer"
