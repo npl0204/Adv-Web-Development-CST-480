@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios, { AxiosError } from 'axios';
-import { BookType, Error } from '../../src/type';
+import { AuthorType, BookType, Error } from '../../src/type';
 import { Link } from 'react-router-dom';
 import { Typography, IconButton, Input, FormControl, FormHelperText } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -18,16 +18,31 @@ function Books() {
   const [books, setBooks] = useState([] as BookType[]);
   const [searchInput, setSearchInput] = useState("");
   const [sortedBooks, setSortedBook] = useState([] as BookType[]);
+  const [authors, setAuthors] = useState([] as AuthorType[]);
 
-  // use axios to fetch books from backend
   useEffect(() => {
-    console.log("Getting data")
+    fetchData();
+  }, []);
+
+  const fetchData = () => {
+    console.log("Getting datas")
     axios.get('/api/books').then((res) => {
       setBooks(res.data);
       setSortedBook(sortBooks(res.data));
-      setLoading(false);
     });
-  }, []);
+    axios.get('/api/authors').then((res) => {
+      setAuthors(res.data);
+      setLoading(false);
+    })
+  }
+
+  const getAuthorName = (id: string) => {
+    const author = authors.find((a) => a.id === id);
+    if (author) {
+      return author.name;
+    }
+    return "";
+  }
 
   if (loading) {
     return <div>Loading...</div>;
@@ -40,7 +55,7 @@ function Books() {
         className="form-control col-12 mt-3 mb-3"
         type="search"
         placeholder="Display all Books Published after Year ..."
-        value={searchInput} 
+        value={searchInput}
         onChange={handleChangeYear}/>
       <Typography variant="h6" className="alert"> No books found</Typography>
     </div>;
@@ -95,8 +110,8 @@ function Books() {
     <Typography variant="h4" color="lightpink"><b>All Books</b></Typography>
     <FormControl fullWidth>
       <Input
-            aria-describedby="my-helper-text" 
-            onChange={handleChangeYear} 
+            aria-describedby="my-helper-text"
+            onChange={handleChangeYear}
             placeholder="Display Books Published after Year ..."
             value={searchInput} />
     </FormControl>
@@ -108,6 +123,7 @@ function Books() {
           <TableRow>
             <TableCell><b>Book</b></TableCell>
             <TableCell align="center"><b>Book ID</b></TableCell>
+            <TableCell align="center"><b>Author Name</b></TableCell>
             <TableCell align="center"><b>Author ID</b></TableCell>
             <TableCell align="center"><b>Publication Year</b></TableCell>
             <TableCell align="center"><b>Genre</b></TableCell>
@@ -128,10 +144,11 @@ function Books() {
                 </Link>
               </TableCell>
               <TableCell align="center">{book.id}</TableCell>
+              <TableCell align="center">{getAuthorName(book.author_id)}</TableCell>
               <TableCell align="center">{book.author_id}</TableCell>
               <TableCell align="center">{book.pub_year}</TableCell>
               <TableCell align="center">{book.genre}</TableCell>
-              <TableCell align="center"> 
+              <TableCell align="center">
                 <IconButton aria-label="delete" onClick={(e) => handleDelete(book.id, e)}>
                   <DeleteIcon />
                 </IconButton>
