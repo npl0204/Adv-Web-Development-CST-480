@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios, { AxiosError } from 'axios';
 import {
   TextField,
@@ -11,36 +11,21 @@ import {
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { createTheme } from '@mui/material/styles';
 
-const theme = createTheme();
-
-function User() {
+function Signup() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('Not logged in');
-  const [token, setToken] = useState('');
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if(token) {
-      setToken(token);
-      setMessage('Logged in');
-    } else {
-      setMessage('Not authorized');
-    }
-  }, [token]);
-
-  function login(e: React.FormEvent) {
+  function signup(e: React.FormEvent) {
     e.preventDefault();
-    axios.post('/login', {
+    axios.post('/signup', {
       username: username,
       password: password
     }).then((res) => {
       const data = res.data;
       localStorage.setItem('token', data.token);
       setMessage(data.message);
-      window.location.reload();
     }).catch((error) => {
       let errorObj = error as AxiosError;
       if (errorObj.response === undefined) {
@@ -51,35 +36,9 @@ function User() {
     })
   }
 
-  function logout(e: React.FormEvent) {
-    e.preventDefault();
-    axios.post('/logout').then((res) => {
-      console.log(res.data);
-      alert("You have been logged out");
-      setMessage(res.data.message);
-      window.location.reload();
-    })
-    localStorage.removeItem('token');
-  }
-
-  if (token.length > 0) {
-    return (
-      <>
-        <Container component="main" sx={{ mt: 5, mb: 5 }} maxWidth="xs">
-          <Typography variant="h5" color="lightpink"><b>{ message }</b></Typography>
-          <Box textAlign='center'>
-            <Button variant="outlined" onClick={logout} sx={{ color: '#fd8496', mt: 3, mb: 2 }}>
-            Logout
-            </Button>
-          </Box>
-        </Container>
-      </>
-    )
-  }
-
   return (
     <>
-      <Container component="main" sx={{ mt: 5, mb: 5 }} maxWidth="xs">
+      <Container component="main" sx={{ mt: 8, mb: 5 }} maxWidth="xs">
         <Typography variant="h5" color="lightpink"><b>{ message }</b></Typography>
         <Box
           component="form"
@@ -96,7 +55,7 @@ function User() {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            Sign up
           </Typography>
           <Box component="form" noValidate sx={{ mt: 1 }}>
             <div>
@@ -118,15 +77,15 @@ function User() {
                 onChange={(e) => setPassword(e.target.value)}
               />
               <Box textAlign='center'>
-                <Button variant="outlined" onClick={login} sx={{ color: '#fd8496', mt: 3, mb: 2 }}>
-                  Login
+                <Button variant="outlined" onClick={signup} sx={{ color: '#fd8496', mt: 3, mb: 2 }}>
+                  Signup
                 </Button>
               </Box>
               <Grid container>
                 <Grid item>
-                  <Link to={"/signup"} style={{ color: '#fd8496', textDecoration: 'inherit' }}>
+                  <Link to={"/"} style={{ color: '#fd8496', textDecoration: 'inherit' }}>
                     <p>
-                      <span className="normal">Don't have an account? Sign Up</span>
+                      <span className="normal">Already have an account? Sign in</span>
                     </p>
                   </Link>
                 </Grid>
@@ -139,4 +98,4 @@ function User() {
   );
 }
 
-export default User;
+export default Signup;

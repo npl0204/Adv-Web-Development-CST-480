@@ -3,7 +3,7 @@ import sqlite3 from "sqlite3";
 import { open } from "sqlite";
 import { Book, Author, BookResponse, AuthorResponse, PostResponse } from "./type.js";
 import cookieParser from "cookie-parser";
-import { login, logout, authorizeUser, authorizeAdmin } from "./authorization.js";
+import { login, logout, signup, authorizeUser, authorizeAdmin } from "./authorization.js";
 
 let app = express();
 app.use(cookieParser());
@@ -20,6 +20,7 @@ await db.get("PRAGMA foreign_keys = ON");
 /* AUTHORIZATION */
 app.post("/login", login);
 app.post("/logout", logout);
+app.post("/signup", signup);
 
 // get all books or get all books on or after a certain year
 app.get("/api/books", async (req, res: BookResponse) => {
@@ -53,7 +54,7 @@ app.get("/api/books/:id", async (req, res: BookResponse) => {
 });
 
 // insert a book
-app.post("/api/books", async (req, res: PostResponse) => {
+app.post("/api/books", authorizeUser, async (req, res: PostResponse) => {
   const book = req.body.book;
   if (!book) {
     return res.status(400).json({ error: "Book is required" });
@@ -77,7 +78,7 @@ app.post("/api/books", async (req, res: PostResponse) => {
 });
 
 // put to update a book
-app.put("/api/books/:id", async (req, res: BookResponse) => {
+app.put("/api/books/:id", authorizeUser, async (req, res: BookResponse) => {
   const bookReq = req.body.book;
   const id = req.params.id;
 
@@ -119,7 +120,7 @@ app.put("/api/books/:id", async (req, res: BookResponse) => {
 });
 
 // delete a book
-app.delete("/api/books/:id", async (req, res: BookResponse) => {
+app.delete("/api/books/:id", authorizeUser, async (req, res: BookResponse) => {
   const id = req.params.id;
   if (!id) {
     return res.status(400).json({ error: "ID is required" });
@@ -154,7 +155,7 @@ app.get("/api/authors/:id", async (req, res: AuthorResponse) => {
 });
 
 // insert an author
-app.post("/api/authors", async (req, res: PostResponse) => {
+app.post("/api/authors", authorizeUser, async (req, res: PostResponse) => {
   const author = req.body.author;
   if (!author) {
     return res.status(400).json({ error: "Author is required" });
@@ -171,7 +172,7 @@ app.post("/api/authors", async (req, res: PostResponse) => {
 });
 
 // put to update a author
-app.put("/api/authors/:id", async (req, res: AuthorResponse) => {
+app.put("/api/authors/:id", authorizeUser, async (req, res: AuthorResponse) => {
   const authorReq = req.body.author;
   const id = req.params.id;
 
@@ -200,7 +201,7 @@ app.put("/api/authors/:id", async (req, res: AuthorResponse) => {
 });
 
 //  delete author but not delete author that has books
-app.delete("/api/authors/:id", async (req, res: AuthorResponse) => {
+app.delete("/api/authors/:id", authorizeUser, async (req, res: AuthorResponse) => {
   const id = req.params.id;
   if (!id) {
     return res.status(400).json({ error: "ID is required" });

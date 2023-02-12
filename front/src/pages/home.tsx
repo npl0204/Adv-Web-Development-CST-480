@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import User from '../components/User';
-
+import { Divider } from '@mui/material';
 
 export default function Home() {
   return (
@@ -16,18 +16,21 @@ export default function Home() {
       }}
     >
       <CssBaseline />
-      <Container component="main" sx={{ mt: 8, mb: 2 }} maxWidth="sm">
+      <Container component="main" sx={{ mt: 5, mb: 5 }} maxWidth="sm">
         <Typography variant="h3" color="lightpink" gutterBottom>
           <b>Welcome to my page</b>
         </Typography>
         <Typography variant="h6" gutterBottom>
           <ul className="header">
-            <li>Choose <Link to="/authors" style={{ color: '#fd8496' }}>Authors</Link> to see list or all authors or to add an author. </li>
-            <li>Choose <Link to="/books" style={{ color: '#fd8496' }}>Books</Link> to see list or all books or to add a book. </li>
+            <li>Choose <Link to="/authors" style={{ color: '#fd8496' }}>Authors</Link> to see list or all authors. </li>
+            <li>Choose <Link to="/books" style={{ color: '#fd8496' }}>Books</Link> to see list or all books. </li>
+            <li>Log in to add, update, or delete book/author lists. </li>
           </ul>
           <User />
         </Typography>
       </Container>
+      <Divider />
+      <User />
       <Box
         component="footer"
         sx={{

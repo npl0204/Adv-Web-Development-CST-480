@@ -25,6 +25,7 @@ interface Success {
 
 interface MessageResponse {
   message: string;
+  token?: string;
 }
 
 type EmptyResponse = "";

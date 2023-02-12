@@ -124,6 +124,7 @@ function Books() {
             <TableCell><b>Book</b></TableCell>
             <TableCell align="center"><b>Book ID</b></TableCell>
             <TableCell align="center"><b>Author Name</b></TableCell>
+            <TableCell align="center"><b>Author ID</b></TableCell>
             <TableCell align="center"><b>Publication Year</b></TableCell>
             <TableCell align="center"><b>Genre</b></TableCell>
             <TableCell align="center"><b>Delete</b></TableCell>
@@ -144,6 +145,7 @@ function Books() {
               </TableCell>
               <TableCell align="center">{book.id}</TableCell>
               <TableCell align="center">{getAuthorName(book.author_id)}</TableCell>
+              <TableCell align="center">{book.author_id}</TableCell>
               <TableCell align="center">{book.pub_year}</TableCell>
               <TableCell align="center">{book.genre}</TableCell>
               <TableCell align="center">

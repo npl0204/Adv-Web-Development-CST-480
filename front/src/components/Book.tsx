@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios, { AxiosError } from 'axios';
 import { AuthorType, Error } from '../../src/type';
-import { TextField, 
-         MenuItem, 
+import { TextField,
+         MenuItem,
          Button,
          Typography,
-         Box 
+         Box
         } from '@mui/material';
 import Container from '@mui/material/Container';
 
@@ -51,7 +51,6 @@ function Book() {
       let { response } = errorObj;
       let data = response.data as Error;
       alert(data.error);
-      console.log(response);
     }
   };
 
@@ -61,7 +60,7 @@ function Book() {
 
   return (
     <div className="row">
-    <Container component="main" sx={{ mt: 0, mb: 5 }} maxWidth="lg">
+    <Container component="main" sx={{ mt: 5, mb: 5 }} maxWidth="lg">
     <Typography variant="h4" color="lightpink"><b>Add a Book</b></Typography>
     <Box
       component="form"
