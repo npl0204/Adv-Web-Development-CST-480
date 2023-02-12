@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import React, { useState } from 'react';
-=======
 import React, { useState, useEffect } from 'react';
->>>>>>> bdda661... Fixes stuffs
 import axios, { AxiosError } from 'axios';
 import {
   TextField,
@@ -20,8 +16,6 @@ function Signup() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('Not logged in');
-<<<<<<< HEAD
-=======
   const [token, setToken] = useState('');
 
   useEffect(() => {
@@ -31,7 +25,6 @@ function Signup() {
       setMessage('Logged in');
     }
   }, [token]);
->>>>>>> bdda661... Fixes stuffs
 
   function signup(e: React.FormEvent) {
     e.preventDefault();
@@ -42,11 +35,8 @@ function Signup() {
       const data = res.data;
       localStorage.setItem('token', data.token);
       setMessage(data.message);
-<<<<<<< HEAD
-=======
       alert("Sign up successful! You are logged in");
       window.location.reload();
->>>>>>> bdda661... Fixes stuffs
     }).catch((error) => {
       let errorObj = error as AxiosError;
       if (errorObj.response === undefined) {
@@ -57,8 +47,6 @@ function Signup() {
     })
   }
 
-<<<<<<< HEAD
-=======
   if(token.length > 0) {
     return (
       <>
@@ -68,7 +56,6 @@ function Signup() {
   }
 
 
->>>>>>> bdda661... Fixes stuffs
   return (
     <>
       <Container component="main" sx={{ mt: 8, mb: 5 }} maxWidth="xs">
