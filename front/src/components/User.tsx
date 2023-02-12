@@ -4,7 +4,6 @@ import {
   TextField,
   Button,
   Container,
-  Divider,
   Typography,
   Box,
   Avatar,
@@ -63,30 +62,9 @@ function User() {
     localStorage.removeItem('token');
   }
 
-  function signup(e: React.FormEvent) {
-    e.preventDefault();
-    axios.post('/signup', {
-      username: username,
-      password: password
-    }).then((res) => {
-      const data = res.data;
-      localStorage.setItem('token', data.token);
-      setMessage(data.message);
-      window.location.reload();
-    }).catch((error) => {
-      let errorObj = error as AxiosError;
-      if (errorObj.response === undefined) {
-        throw errorObj;
-      }
-      let { response } = errorObj;
-      console.log(response.data);
-    })
-  }
-
   if (token.length > 0) {
     return (
       <>
-        <Divider />
         <Container component="main" sx={{ mt: 5, mb: 5 }} maxWidth="xs">
           <Typography variant="h5" color="lightpink"><b>{ message }</b></Typography>
           <Box textAlign='center'>
@@ -101,13 +79,12 @@ function User() {
 
   return (
     <>
-      <Divider />
       <Container component="main" sx={{ mt: 5, mb: 5 }} maxWidth="xs">
         <Typography variant="h5" color="lightpink"><b>{ message }</b></Typography>
         <Box
           component="form"
           sx={{
-            marginTop: 8,
+            marginTop: 5,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
