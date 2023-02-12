@@ -30,7 +30,10 @@ export default function Home() {
         </Typography>
       </Container>
       <Divider />
+<<<<<<< HEAD
       <User />
+=======
+>>>>>>> bdda661... Fixes stuffs
       <Box
         component="footer"
         sx={{
