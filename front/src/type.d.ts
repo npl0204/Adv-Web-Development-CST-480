@@ -15,3 +15,7 @@ export interface BookType {
 export interface Error { 
     error: string;
 };
+export interface MessageResponse {
+    message: string;
+    token?: string;
+};
