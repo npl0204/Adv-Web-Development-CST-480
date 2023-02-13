@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios, { AxiosError } from 'axios';
 import { Error } from '../../src/type';
 import { TextField,
@@ -19,7 +19,7 @@ function Author() {
       return;
     }
     try {
-      axios.post('/api/authors',{
+      await axios.post('/api/authors',{
         author: {
           name: name,
           bio: bio
