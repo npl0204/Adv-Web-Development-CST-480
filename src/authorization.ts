@@ -76,10 +76,9 @@ async function signup(req: Request, res: Response<MessageResponse>) {
   let user = await db.get("SELECT * FROM users WHERE username = ?", username)
   if (user) {
     return res.status(400).json({ message: "Username has been used. Please choose a new one." });
-  } 
+  }
   const hashedPassword = await argon2.hash(password);
   const result = await db.run("INSERT INTO users (username, password) VALUES (?, ?)", username, hashedPassword);
-
   if (result.lastID) {
     let token = makeToken();
     tokenStorage[token] = { username, role: 'user' };
