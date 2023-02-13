@@ -27,8 +27,6 @@ function User() {
     if(token) {
       setToken(token);
       setMessage('Logged in');
-    } else {
-      setMessage('Not authorized');
     }
   }, [token]);
 
