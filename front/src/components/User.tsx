@@ -12,6 +12,7 @@ import {
 import { Link } from 'react-router-dom';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { createTheme } from '@mui/material/styles';
+import { MessageResponse } from '../../src/type';
 
 const theme = createTheme();
 
@@ -20,6 +21,14 @@ function User() {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('Not logged in');
   const [token, setToken] = useState('');
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if(token) {
+      setToken(token);
+      setMessage('Logged in');
+    }
+  }, [token]);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -47,7 +56,8 @@ function User() {
         throw errorObj;
       }
       let { response } = errorObj;
-      console.log(response.data);
+      let data = response.data as MessageResponse;
+      alert(data.message);
     })
   }
 
