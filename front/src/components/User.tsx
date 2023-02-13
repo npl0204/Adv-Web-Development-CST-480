@@ -14,8 +14,6 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { createTheme } from '@mui/material/styles';
 import { MessageResponse } from '../../src/type';
 
-const theme = createTheme();
-
 function User() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -27,6 +25,7 @@ function User() {
     if(token) {
       setToken(token);
       setMessage('Logged in');
+      console.log(token);
     }
   }, [token]);
 
