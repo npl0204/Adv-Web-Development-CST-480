@@ -44,7 +44,6 @@ async function login(req: Request, res: Response<MessageResponse>) {
   //   .json({ message: "Username or password invalid" });
   // }
   let { username, password } = req.body;
-  console.log(username, password)
   let user = await db.get("SELECT * FROM users WHERE username = ?", username)
   if (user) {
     const storedPassword = user.password;
@@ -90,7 +89,6 @@ async function signup(req: Request, res: Response<MessageResponse>) {
 
 let authorizeUser: RequestHandler = (req, res: PostResponse, next) => {
   let { token } = req.cookies;
-  console.log(token);
   if (token === undefined || !tokenStorage.hasOwnProperty(token)) {
     return res.status(401).json({ error: "Not logged in" });
   }
@@ -99,7 +97,6 @@ let authorizeUser: RequestHandler = (req, res: PostResponse, next) => {
 
 let authorizeAdmin: RequestHandler = (req, res: PostResponse, next) => {
   let { token } = req.cookies;
-  console.log(token);
   if (token === undefined || !tokenStorage.hasOwnProperty(token)) {
     return res.status(401).json({ error: "Not logged in" });
   }
