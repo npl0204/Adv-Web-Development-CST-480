@@ -6,6 +6,71 @@ let host = "localhost";
 let protocol = "http";
 let baseUrl = `${protocol}://${host}:${port}`;
 
+/****************** NOT AUTHORIZED ******************/
+// test("Wrong Username/Password, Cannot Log in", async () => {
+//   const user = {
+//     username: "linh",
+//     password: "password",
+//   }
+//   try {
+//     await axios.post(`${baseUrl}/login`, { user });
+//   } catch (error) {
+//     let errorObj = error as AxiosError;
+//     if (errorObj.response === undefined) {
+//       throw errorObj;
+//     }
+//     let { response } = errorObj;
+//     expect(response.status).toEqual(400);
+//     expect(response.data).toEqual({ error: "Username or password invalid" });
+//   }
+// });
+
+test("No Authorized, Cannot Add Author", async () => {
+  const author = {
+    name: "Figginsworth III",
+    bio: "A traveling gentleman.",
+  }
+  try {
+    await axios.put(`${baseUrl}/api/authors/1a`, { author });
+  } catch (error) {
+    let errorObj = error as AxiosError;
+    if (errorObj.response === undefined) {
+      throw errorObj;
+    }
+    let { response } = errorObj;
+    expect(response.status).toEqual(401);
+    expect(response.data).toEqual({ error: "Not logged in" });
+  }
+});
+
+// test("Cannot Registation Since Username Has Been Used", async () => {
+//   const user = {
+//     username: "admin",
+//     password: "password",
+//   }
+//   try {
+//     await axios.post(`${baseUrl}/signup`, { user });
+//   } catch (error) {
+//     let errorObj = error as AxiosError;
+//     if (errorObj.response === undefined) {
+//       throw errorObj;
+//     }
+//     let { response } = errorObj;
+//     expect(response.status).toEqual(400);
+//     expect(response.data).toEqual({ error: "Username has been used. Please choose a new one." });
+//   }
+// });
+
+/****************** SIGNUP/AUTHORIZED ******************/
+test("Registation New User and Log In", async () => {
+  let user = {
+    username: "linh",
+    password: "password",
+  }
+  let result = await axios.post(`${baseUrl}/signup`, { user });
+  const data = result.data;
+  expect(data.message).toEqual("User created");
+});
 
 /****************** HAPPY PATH ******************/
 test("Add 1 Author", async () =>{
