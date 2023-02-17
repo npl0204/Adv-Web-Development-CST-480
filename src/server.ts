@@ -223,14 +223,14 @@ app.delete("/api/authors/:id", authorizeUser, async (req, res: AuthorResponse) =
   return res.sendStatus(200);
 });
 
-app.use(express.static("public"));
-app.get("/*", (req, res) => {
-    res.sendFile("index.html", { root: publicStaticFolder });
-});
-
 let port = 3000;
 let host = "localhost";
 let protocol = "http";
 app.listen(port, host, () => {
     console.log(`${protocol}://${host}:${port}`);
+});
+
+app.use(express.static("public"));
+app.get("/*", (req, res) => {
+    res.sendFile("index.html", { root: publicStaticFolder });
 });
