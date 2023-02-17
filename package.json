@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start:deploy": "cd out && NODE_ENV=production pm2 start server.js",
+    "start:deploy": "npm run test-data && cd out && NODE_ENV=production pm2 start server.js",
     "setup": "rm -f database.db && sqlite3 database.db < setup.sql",
     "test-data": "sqlite3 database.db < test-data.sql",
     "build": "rm -rf out && mkdir out && tsc",
