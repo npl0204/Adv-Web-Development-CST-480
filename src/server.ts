@@ -5,6 +5,11 @@ import { Book, Author, BookResponse, AuthorResponse, PostResponse } from "./type
 import cookieParser from "cookie-parser";
 import { login, logout, signup, authorizeUser, authorizeAdmin } from "./authorization.js";
 
+import * as url from "url";
+import * as path from "path";
+let __dirname = url.fileURLToPath(new URL("..", import.meta.url));
+let publicStaticFolder = path.resolve(__dirname, "out", "public");
+
 let app = express();
 app.use(cookieParser());
 app.use(express.json());
@@ -216,6 +221,11 @@ app.delete("/api/authors/:id", authorizeUser, async (req, res: AuthorResponse) =
   }
   await db.run(`DELETE FROM authors WHERE id = ?`, [id]);
   return res.sendStatus(200);
+});
+
+app.use(express.static("public"));
+app.get("/*", (req, res) => {
+    res.sendFile("index.html", { root: publicStaticFolder });
 });
 
 let port = 3000;
