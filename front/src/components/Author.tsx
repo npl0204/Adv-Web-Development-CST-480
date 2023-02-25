@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios, { AxiosError } from 'axios';
 import { Error } from '../../src/type';
 import { TextField,
