@@ -65,9 +65,6 @@ function UpdateBook() {
     }
   };
 
-  function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
-    setAuthorId(e.target.value);
-  }
 
   if (loading) {
     return <div>Loading...</div>;
