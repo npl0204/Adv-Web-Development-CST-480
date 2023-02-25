@@ -6,12 +6,14 @@ interface Book {
   title: string;
   pub_year: string;
   genre: string;
+  owned_by: string;
 }
 
 interface Author {
   id: string;
   name: string;
   bio: string;
+  owned_by: string;
 }
 
 interface Error {
