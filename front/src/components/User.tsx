@@ -11,7 +11,6 @@ import {
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { createTheme } from '@mui/material/styles';
 import { MessageResponse } from '../../src/type';
 
 function User() {
