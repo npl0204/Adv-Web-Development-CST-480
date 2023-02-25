@@ -87,6 +87,14 @@ async function signup(req: Request, res: Response<MessageResponse>) {
   }
 }
 
+function getUsername(req: Request) {
+  let { token } = req.cookies;
+  if (token === undefined || !tokenStorage.hasOwnProperty(token)) {
+    return "";
+  }
+  return tokenStorage[token].username;
+}
+
 let authorizeUser: RequestHandler = (req, res: PostResponse, next) => {
   let { token } = req.cookies;
   if (token === undefined || !tokenStorage.hasOwnProperty(token)) {
@@ -95,15 +103,32 @@ let authorizeUser: RequestHandler = (req, res: PostResponse, next) => {
   next();
 };
 
-let authorizeAdmin: RequestHandler = (req, res: PostResponse, next) => {
+let authorizeOwnerForBook: RequestHandler = async (req, res: PostResponse, next) => {
   let { token } = req.cookies;
   if (token === undefined || !tokenStorage.hasOwnProperty(token)) {
     return res.status(401).json({ error: "Not logged in" });
   }
-  if (tokenStorage[token].role !== "admin") {
+  const id = req.params.id;
+  const item = await db.get(`SELECT * FROM books WHERE id = ?`, id)
+  const username = tokenStorage[token].username;
+  if (item.owned_by !== username) {
     return res.status(403).json({ error: "Not authorized"})
   };
   next();
 }
 
-export { login, logout, signup, authorizeUser, authorizeAdmin }
+let authorizeOwnerForAuthor: RequestHandler = async (req, res: PostResponse, next) => {
+  let { token } = req.cookies;
+  if (token === undefined || !tokenStorage.hasOwnProperty(token)) {
+    return res.status(401).json({ error: "Not logged in" });
+  }
+  const id = req.params.id;
+  const item = await db.get(`SELECT * FROM authors WHERE id = ?`, id)
+  const username = tokenStorage[token].username;
+  if (item.owned_by !== username) {
+    return res.status(403).json({ error: "Not authorized"})
+  };
+  next();
+}
+
+export { login, logout, signup, authorizeUser, authorizeOwnerForBook, authorizeOwnerForAuthor, getUsername }
