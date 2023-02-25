@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios, { AxiosError } from 'axios';
 import { AuthorType, Error } from '../../src/type';
 import { Link } from 'react-router-dom';
-import { Typography, IconButton, Input, FormControl } from '@mui/material';
+import { Typography, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
